@@ -29,16 +29,6 @@
             text-rendering: optimizeLegibility;
         }
 
-        /*.dropzone {*/
-        /*    background: white;*/
-        /*    border-radius: 5px;*/
-        /*    border: 2px dashed rgb(0, 135, 247);*/
-        /*    border-image: none;*/
-        /*    max-width: 500px;*/
-        /*    margin-left: auto;*/
-        /*    margin-right: auto;*/
-        /*}*/
-
         #drop_zone {
             border: 3px dashed #aaaaaa;
             -moz-border-radius: 5px;
@@ -72,8 +62,9 @@
         footer {
             position: absolute;
             bottom: 0;
-            width: 100%;
-            height: 80px;
+            /*width: 100%;*/
+            /*height: 80px;*/
+            height: 40px;
             /*line-height: 90px; // Vertically center text */
         }
     </style>
@@ -89,41 +80,22 @@
 
     <div class="row" id="div-supp">
         <div class="col text-center" id="supplier-select">
-            <p style="font-size: larger">Select a supplier:</p>
+            <p style="font-size: larger">Select a supplier</p>
         </div>
     </div>
     <div class="row" id="div-process" hidden>
         <div class="col-sm-6" style="border-right: 1px solid #ccc;">
             <h2 id="import-title">Import DigiKey order</h2>
-<!--            <br><br>-->
-<!--            <u style="color: #6464e9">> Instructions</u>-->
-<!--            <div class="panel-group">-->
-<!--                <div class="panel panel-default">-->
-<!--                    <div class="panel-heading">-->
-<!--                        <p class="panel-title">-->
-<!--                            <a data-toggle="collapse" href="#collapse1">Instructions</a>-->
-<!--                        </p>-->
-<!--                    </div>-->
-<!--                    <div id="collapse1" class="panel-collapse collapse">-->
-<!--                        <div class="panel-body">Instructions instructions instructions instructions instructions instructions instructions instructions instructions instructions instructions instructions instructions instructions instructions instructions</div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--            <br><br>-->
 
             <input style="display: none" type="file" id="file-input">
             <div id="drop_zone" onclick="document.getElementById('file-input').click()">
                 <span style="font-size: 40pt" class="glyphicon glyphicon-file"></span><br>
-                <p class="dropzone-prompt">Upload *supplier* basket .xxx</p>
-                <p class="dropzone-filename" hidden>yyyy-mm-ddThh:mm:ss</p>
+                <p class="dropzone-prompt"></p>
+                <p class="dropzone-filename" hidden></p>
             </div>
             <br>
-            <div class="alert alert-danger" id="drop_zone-error" hidden>
-                <strong>No products found!</strong> Please check the file and try again.
-            </div>
-            <div class="alert alert-success" id="drop_zone-success" hidden>
-                17 products found, total cost: 60.31
-            </div>
+            <div class="alert alert-danger" id="drop_zone-error" hidden></div>
+            <div class="alert alert-success" id="drop_zone-success" hidden></div>
         </div>
 
         <div class="col-sm-6" id="export-col">
@@ -155,8 +127,7 @@
     </div>
 
     <footer>
-        <hr>
-        <i>*increase in speed and/or easiness not guaranteed</i><br>
+        <i>*increase in speed and/or easiness not guaranteed</i>
     </footer>
 </div>
 
@@ -173,11 +144,6 @@
             type: "csv",
             fileType: ".csv",
         },
-        // "rs": {
-        //     name: "RS",
-        //     type: "email",
-        //     fileType: ".msg",
-        // }
     }
 
     for (const [id, _supplier] of Object.entries(suppliers)) {
