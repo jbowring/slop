@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ShortSyte</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <!-- dropzone -->
+<!--    <script src="./dropzone/min/dropzone.min.js"></script>-->
+
+    <!-- PapaParse -->
+    <script src="./papaparse/papaparse.min.js"></script>
+
+    <style>
+        #drop_zone {
+            border: 4px dashed #aaaaaa;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            border-radius: 5px;
+            padding: 25px;
+            text-align: center;
+            color: #aaaaaa;
+        }
+
+        .dropzone-prompt {
+            font: 28pt 'Arial';
+        }
+
+        .dropzone-filename {
+            font: 22pt 'Arial';
+        }
+
+        .btn-supp {
+            margin: 5px;
+        }
+
+        html {
+            position: relative;
+            min-height: 100%;
+        }
+        body {
+            margin-bottom: 80px; /* Margin bottom by footer height */
+        }
+
+        footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 80px; /* Set the fixed height of the footer here */
+            /*line-height: 90px; !* Vertically center the text there *!*/
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>SyteLine Processor</h1>
+    <i>Turn online orders into SyteLine POs fast and easy!*</i>
+    <p>This tool is not guaranteed to be bug free. Please verify its outputs. </p>
+    <hr>
+
+    <div class="row" id="div-supp">
+        <div class="col text-center">
+            <p style="font-size: larger">Select a supplier:</p>
+            <button type="button" id="digikey" onclick="setSupplier(this.id)" class="btn btn-primary btn-lg btn-supp">DigiKey</button>
+            <button type="button" id="farnell" onclick="setSupplier(this.id)" class="btn btn-primary btn-lg btn-supp">Farnell</button>
+            <button type="button" class="btn disabled btn-lg btn-supp" title="Coming soon!" hidden>RS</button>
+        </div>
+    </div>
+    <div class="row" id="div-process" hidden>
+        <div class="col-sm-6" style="border-right: 1px solid #ccc;">
+            <h2 id="import-title">Import DigiKey order</h2>
+<!--            <br><br>-->
+            <u style="color: #6464e9">> Instructions</u>
+<!--            <div class="panel-group">-->
+<!--                <div class="panel panel-default">-->
+<!--                    <div class="panel-heading">-->
+<!--                        <p class="panel-title">-->
+<!--                            <a data-toggle="collapse" href="#collapse1">Instructions</a>-->
+<!--                        </p>-->
+<!--                    </div>-->
+<!--                    <div id="collapse1" class="panel-collapse collapse">-->
+<!--                        <div class="panel-body">Instructions instructions instructions instructions instructions instructions instructions instructions instructions instructions instructions instructions instructions instructions instructions instructions</div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+            <br><br>
+
+            <div id="drop_zone">
+                <span style="font-size: 40pt" class="glyphicon glyphicon-file"></span><br>
+                <p class="dropzone-prompt">Upload *supplier* basket .xxx</p>
+                <p class="dropzone-filename" hidden>yyyy-mm-ddThh:mm:ss</p>
+            </div>
+            <br>
+            <div class="alert alert-danger" id="drop_zone-error" hidden>
+                <strong>No products found!</strong> Please check the file and try again.
+            </div>
+            <div class="alert alert-success" id="drop_zone-success" hidden>
+                17 products found, total cost: 60.31
+            </div>
+        </div>
+
+        <div class="col-sm-6" id="export-col">
+            <h2>Export to SyteLine</h2>
+
+            <div class="form-group">
+                <label for="category">Category:</label>
+                <input type="text" class="form-control" oninput="InputChanged(this)" onfocusout="Validate(this)" id="category" maxlength="30" placeholder="Project Materials" value="Project Materials">
+            </div>
+            <div class="form-group">
+                <label for="project">Project code:</label>
+                <input type="text" class="form-control" oninput="InputChanged(this)" onfocusout="Validate(this)" id="project" maxlength="20" placeholder="ex. C30402">
+            </div>
+
+            <button type="button" class="btn btn-primary" id="btn-copy" onclick="Generate()" disabled>
+                Copy data to clipboard
+            </button>
+            <br><br>
+            <div id="copy-complete" hidden>
+                <div class="alert alert-info">
+                    <strong>Copied!</strong>
+                    To add the data to a purchase order, go to <i>Edit</i> > <i>Paste Rows Append</i>
+                </div>
+                <i style="font-size: 8pt; color: #999999">
+                    Warning: this might not work if the PO columns are not in their default order in SyteLine
+                </i>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <hr>
+        <i>*faster and/or easier. YMMV</i><br>
+    </footer>
+</div>
+
+<script>
+    let supplier = null;
+    const suppliers = {
+        "digikey": {
+            name: "DigiKey",
+            type: "csv",
+        },
+        "farnell": {
+            name: "Farnell",
+            type: "csv",
+        },
+        "rs": {
+            name: "RS",
+            type: "email",
+        }
+    }
+
+    class Product {
+        constructor(description, quantity, price) {
+            this.description = description;
+            this.quantity = quantity;
+            this.price = price;
+        }
+    }
+
+    let products = [];
+    let productsValid = false;
+
+    const dropZone = document.getElementById("drop_zone");
+    const copyCompleteDiv = document.getElementById("copy-complete");
+
+    function setSupplier(id) {
+        supplier = id;
+        document.getElementById("div-supp").hidden = true;
+        document.getElementById("import-title").innerText = "Import " + suppliers[supplier].name + " order";
+        if(suppliers[supplier].type === "csv") {
+            dropZone.getElementsByClassName("dropzone-prompt")[0].innerText = "Upload " + suppliers[supplier].name + " basket .csv";
+        }
+        document.getElementById("div-process").hidden = false;
+    }
+
+    function StripHeader(header) {
+        return header.replace(/[^A-z]/g, '').toLowerCase()
+    }
+
+    function CsvParse(file, callback) {
+        const translations = {
+            Description: [
+                "Manufacturer / Description",
+                "Description",
+            ],
+            Quantity: [
+                "Quantity",
+                "Qty",
+            ],
+            Price: [
+                "Unit Cost",
+                "Unit Price",
+            ],
+        }
+
+        Papa.parse(file, {
+            complete: function (results) {
+                let index = {}
+                for (const [destination, sources] of Object.entries(translations)) {
+                    for (const source of sources.map(StripHeader)) {
+                        if (results.meta.fields.includes(source)) {
+                            index[StripHeader(destination)] = source;
+                            break;
+                        }
+                    }
+                }
+
+                let errors = []
+                for (const error of results.errors) {
+                    errors.push("<b>Row " + error.row + ":</b> " + error.message);
+                }
+                if (errors.length === 0) {
+                    for (const [destination, sources] of Object.entries(translations)) {
+                        if (!index.hasOwnProperty(StripHeader(destination))) {
+                            errors.push('<b>' + destination + '</b> column not found, tried looking for ' + sources.map((s) => '"'+s+'"').join(", "));
+                        }
+                    }
+                }
+
+                if(errors.length !== 0) {
+                    callback([], errors);
+                } else {
+                    let products = [];
+                    for (const line of results.data) {
+                        products.push(new Product(
+                            line[index.description],
+                            line[index.quantity],
+                            line[index.price],
+                        ))
+                    }
+                    callback(products, errors);
+                }
+
+                // if (errors.length !== 0) {
+                //     let errorBox = document.getElementById("drop_zone-error");
+                //     const messageLimit = 5;
+                //     if (errors.length > messageLimit) {
+                //         let remaining = errors.length - messageLimit;
+                //         errors = errors.slice(0, messageLimit);
+                //         errors.push("<b>" + remaining + " more...</b>");
+                //     }
+                //     errorBox.innerHTML = errors.join("<br>");
+                //     errorBox.hidden = false;
+                //     ProcessProducts(products);
+                //     return;
+                // } else {
+                //     for (const line of results.data) {
+                //         products.push(new Product(
+                //             line[index.description],
+                //             line[index.quantity],
+                //             line[index.price],
+                //         ))
+                //     }
+                // }
+                //
+                // ProcessProducts(products);
+            },
+            delimiter: ',',
+            header: true,
+            transformHeader: StripHeader,
+            dynamicTyping: function (header) {
+                for(const source of translations.Quantity.concat(translations.Price)) {
+                    if (header === StripHeader(source)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+    }
+
+    // function ProcessProducts(_products) {
+    //     products = _products;
+    //     let successBox = document.getElementById("drop_zone-success");
+    //     if(products.length === 0) {
+    //         successBox.hidden = true;
+    //         productsValid = false;
+    //     } else {
+    //         let productCount = 0;
+    //         let totalCost = 0;
+    //         for (const product of products) {
+    //             productCount += product.quantity;
+    //             totalCost += product.quantity * product.price;
+    //         }
+    //         successBox.innerText = productCount + " products found, total cost: " + totalCost.toFixed(2);
+    //         successBox.hidden = false;
+    //         productsValid = true;
+    //     }
+    //
+    //     ValidatePage();
+    // }
+
+    function InputChanged(element) {
+        copyCompleteDiv.hidden = true;
+        Validate(element);
+    }
+
+    function Validate(element) {
+        const parentFormGroup = element.closest(".form-group");
+        const errorClass = "has-error";
+        if(FieldValid(element.id)) {
+            parentFormGroup.classList.remove(errorClass);
+        } else {
+            parentFormGroup.classList.add(errorClass);
+        }
+
+        ValidatePage();
+    }
+
+    function FieldValid(id) {
+        switch(id) {
+            case "category":
+                return document.getElementById(id).value.length > 0;
+            case "project":
+                return document.getElementById(id).value.length > 0;
+            default:
+                return false;
+        }
+    }
+
+    function ValidatePage() {
+        let valid = productsValid && FieldValid("category") && FieldValid("project")
+        document.getElementById("btn-copy").disabled = !valid;
+        if(!valid) {
+            copyCompleteDiv.hidden = true;
+        }
+        return valid;
+    }
+
+    function Generate() {
+        let copyComplete = document.getElementById("copy-complete");
+        copyComplete.hidden = true;
+        if (ValidatePage()) {
+            let out = "";
+            const category = document.getElementById("category").value;
+            const project = document.getElementById("project").value;
+            for(const product of products) {
+                let row = [];
+                row.push(category)
+                row.push(product.description);
+                row.push(project);
+                row.push("");
+                row.push("");
+                row.push(product.quantity.toString())
+                row.push(product.price.toString())
+
+                // SyteLine only allows 60 characters as a field length
+                row = row.map(value => value.substring(0, 60))
+
+                out += row.join('\t') + "\r\n";
+            }
+            WriteClipboard(out, (success) => {
+                if(success) {
+                    setTimeout(() => {
+                        copyComplete.hidden = false;
+                    }, 100);
+                }
+            })
+        }
+    }
+
+    function WriteClipboard(contents, callback) {
+        let textArea = document.createElement("textarea");
+
+        // Place in the top-left corner of screen regardless of scroll position.
+        textArea.style.position = 'fixed';
+        textArea.style.top = "0";
+        textArea.style.left = "0";
+
+        // Ensure it has a small width and height. Setting to 1px / 1em
+        // doesn't work as this gives a negative w/h on some browsers.
+        textArea.style.width = '2em';
+        textArea.style.height = '2em';
+
+        // We don't need padding, reducing the size if it does flash render.
+        textArea.style.padding = "0";
+
+        // Clean up any borders.
+        textArea.style.border = 'none';
+        textArea.style.outline = 'none';
+        textArea.style.boxShadow = 'none';
+
+        // Avoid flash of the white box if rendered for any reason.
+        textArea.style.background = 'transparent';
+
+        textArea.value = contents;
+
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+
+        let success = false;
+        try {
+            success = document.execCommand('copy');
+        } catch (err) {
+            console.log(err);
+        }
+
+        if(!success) {
+            console.log('Copying text command was unsuccessful');
+        }
+
+        document.body.removeChild(textArea);
+
+        callback(success, contents);
+    }
+
+    function handleFileSelect(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+
+        let errorBox = document.getElementById("drop_zone-error");
+        let successBox = document.getElementById("drop_zone-success");
+
+        let dropzoneFilename = dropZone.getElementsByClassName("dropzone-filename")[0];
+        let dropzonePrompt = dropZone.getElementsByClassName("dropzone-prompt")[0];
+
+        let errorBoxWasHidden = errorBox.hidden;
+        errorBox.hidden = true;
+        let successBoxWasHidden = successBox.hidden;
+        successBox.hidden = true;
+
+        copyCompleteDiv.hidden = true;
+        document.getElementById("drop_zone-success").hidden = true;
+
+        // noinspection JSUnresolvedVariable
+        if(!(evt.dataTransfer.items[0].webkitGetAsEntry().isFile && evt.dataTransfer.files.length === 1)) {
+            errorBox.innerText = "Please upload a single file and try again."
+            errorBox.hidden = false;
+            dropzoneFilename.hidden = true;
+            dropzonePrompt.hidden = false;
+            return;
+        }
+
+        let file = evt.dataTransfer.files[0];
+        dropzoneFilename.innerText = file.name;
+        dropzoneFilename.hidden = false;
+        dropzonePrompt.hidden = true;
+
+        function processDropzoneProducts(_products, errors) {
+            if(errors.length > 0) {
+                products = []
+                productsValid = false;
+                const messageLimit = 5;
+                if (errors.length > messageLimit) {
+                    let remaining = errors.length - messageLimit;
+                    errors = errors.slice(0, messageLimit);
+                    errors.push("<b>" + remaining + " more...</b>");
+                }
+                errorBox.innerHTML = errors.join("<br>");
+                setTimeout(() => errorBox.hidden = false, errorBoxWasHidden ? 0: 100);
+            } else {
+                products = _products;
+                if (products.length === 0) {
+                    successBox.hidden = true;
+                    productsValid = false;
+                } else {
+                    let productCount = 0, totalCost = 0;
+                    for (const product of products) {
+                        productCount += product.quantity;
+                        totalCost += product.quantity * product.price;
+                    }
+                    successBox.innerText = productCount + " products found, total cost: " + totalCost.toFixed(2);
+                    productsValid = true;
+                    setTimeout(() => successBox.hidden = false, successBoxWasHidden ? 0: 100);
+                }
+            }
+
+            ValidatePage();
+        }
+
+        if(suppliers[supplier].type === "csv") {
+            CsvParse(file, processDropzoneProducts);
+        }
+    }
+
+    function handleDragOver(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+        evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+    }
+
+    // Setup the dnd listeners.
+    dropZone.addEventListener('dragover', handleDragOver, false);
+    dropZone.addEventListener('drop', handleFileSelect, false);
+</script>
+
+</body>
+</html>
