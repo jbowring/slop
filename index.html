@@ -21,11 +21,28 @@
 
     <!-- dropzone -->
 <!--    <script src="./dropzone/min/dropzone.min.js"></script>-->
+<!--    <link rel="stylesheet" href="./dropzone/dropzone.css">-->
 
     <!-- PapaParse -->
     <script src="./papaparse/papaparse.min.js"></script>
 
     <style>
+        body {
+            font-family: Roboto, "Open Sans", sans-serif;
+            font-weight: 300;
+            text-rendering: optimizeLegibility;
+        }
+
+        /*.dropzone {*/
+        /*    background: white;*/
+        /*    border-radius: 5px;*/
+        /*    border: 2px dashed rgb(0, 135, 247);*/
+        /*    border-image: none;*/
+        /*    max-width: 500px;*/
+        /*    margin-left: auto;*/
+        /*    margin-right: auto;*/
+        /*}*/
+
         #drop_zone {
             border: 4px dashed #aaaaaa;
             -moz-border-radius: 5px;
@@ -33,16 +50,20 @@
             border-radius: 5px;
             padding: 25px;
             text-align: center;
+            max-height: 200px;
             color: #aaaaaa;
+            font-size: 20pt;
         }
 
-        .dropzone-prompt {
-            font: 28pt 'Arial';
-        }
+        /*.dropzone-prompt {*/
+        /*    font-size: 22pt;*/
+        /*    !*font-family: 'Arial';*!*/
+        /*}*/
 
-        .dropzone-filename {
-            font: 22pt 'Arial';
-        }
+        /*.dropzone-filename {*/
+        /*    font-size: 22pt;*/
+        /*    !*font-family: 'Arial';*!*/
+        /*}*/
 
         .btn-supp {
             margin: 5px;
@@ -84,7 +105,7 @@
         <div class="col-sm-6" style="border-right: 1px solid #ccc;">
             <h2 id="import-title">Import DigiKey order</h2>
 <!--            <br><br>-->
-            <u style="color: #6464e9">> Instructions</u>
+<!--            <u style="color: #6464e9">> Instructions</u>-->
 <!--            <div class="panel-group">-->
 <!--                <div class="panel panel-default">-->
 <!--                    <div class="panel-heading">-->
@@ -97,7 +118,7 @@
 <!--                    </div>-->
 <!--                </div>-->
 <!--            </div>-->
-            <br><br>
+<!--            <br><br>-->
 
             <div id="drop_zone">
                 <span style="font-size: 40pt" class="glyphicon glyphicon-file"></span><br>
@@ -183,7 +204,7 @@
         document.getElementById("div-supp").hidden = true;
         document.getElementById("import-title").innerText = "Import " + suppliers[supplier].name + " order";
         if(suppliers[supplier].type === "csv") {
-            dropZone.getElementsByClassName("dropzone-prompt")[0].innerText = "Upload " + suppliers[supplier].name + " basket .csv";
+            dropZone.getElementsByClassName("dropzone-prompt")[0].innerText = "Drop " + suppliers[supplier].name + " basket .csv here";
         }
         document.getElementById("div-process").hidden = false;
     }
