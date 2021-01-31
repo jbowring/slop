@@ -44,27 +44,23 @@
         /*}*/
 
         #drop_zone {
-            border: 4px dashed #aaaaaa;
+            border: 3px dashed #aaaaaa;
             -moz-border-radius: 5px;
             -webkit-border-radius: 5px;
             border-radius: 5px;
             padding: 25px;
             text-align: center;
-            max-height: 200px;
+            min-height: 200px;
             color: #aaaaaa;
             font-size: 20pt;
         }
 
-        /*.dropzone-prompt {*/
-        /*    font-size: 22pt;*/
-        /*    !*font-family: 'Arial';*!*/
-        /*}*/
+        .note {
+            font-size: 8pt;
+            color: #999999;
+        }
 
-        /*.dropzone-filename {*/
-        /*    font-size: 22pt;*/
-        /*    !*font-family: 'Arial';*!*/
-        /*}*/
-
+        /*noinspection CssUnusedSymbol*/
         .btn-supp {
             margin: 5px;
         }
@@ -91,14 +87,13 @@
 <div class="container">
     <h1>SyteLine Order Processor</h1>
     <i>Turn online orders into SyteLine POs fast and easy!*</i>
-    <p>This tool is not guaranteed to be bug free. Please verify its outputs. </p>
+    <p>This tool will probably have bugs. Please verify its outputs. </p>
+    <p class="note">Your order data is processed in the browser; none of it is sent to the server.</p>
     <hr>
 
     <div class="row" id="div-supp">
-        <div class="col text-center">
+        <div class="col text-center" id="supplier-select">
             <p style="font-size: larger">Select a supplier:</p>
-            <button type="button" id="digikey" onclick="setSupplier(this.id)" class="btn btn-primary btn-lg btn-supp">DigiKey</button>
-            <button type="button" id="farnell" onclick="setSupplier(this.id)" class="btn btn-primary btn-lg btn-supp">Farnell</button>
         </div>
     </div>
     <div class="row" id="div-process" hidden>
@@ -120,7 +115,8 @@
 <!--            </div>-->
 <!--            <br><br>-->
 
-            <div id="drop_zone">
+            <input style="display: none" type="file" id="file-input">
+            <div id="drop_zone" onclick="document.getElementById('file-input').click()">
                 <span style="font-size: 40pt" class="glyphicon glyphicon-file"></span><br>
                 <p class="dropzone-prompt">Upload *supplier* basket .xxx</p>
                 <p class="dropzone-filename" hidden>yyyy-mm-ddThh:mm:ss</p>
@@ -155,7 +151,7 @@
                     <strong>Copied!</strong>
                     To add the data to a purchase order, go to <i>Edit</i> > <i>Paste Rows Append</i>
                 </div>
-                <i style="font-size: 8pt; color: #999999">
+                <i class="note">
                     Warning: this might not work if the PO columns are not in their default order in SyteLine
                 </i>
             </div>
@@ -164,7 +160,7 @@
 
     <footer>
         <hr>
-        <i>*faster and/or easier. YMMV</i><br>
+        <i>*increase in speed or easiness not guaranteed. YMMV</i><br>
     </footer>
 </div>
 
@@ -174,15 +170,27 @@
         "digikey": {
             name: "DigiKey",
             type: "csv",
+            fileType: ".csv",
         },
         "farnell": {
             name: "Farnell",
             type: "csv",
+            fileType: ".csv",
         },
-        "rs": {
-            name: "RS",
-            type: "email",
-        }
+        // "rs": {
+        //     name: "RS",
+        //     type: "email",
+        //     fileType: ".msg",
+        // }
+    }
+
+    for (const [id, _supplier] of Object.entries(suppliers)) {
+        let button = document.createElement('button');
+        button.id = id;
+        button.setAttribute('onclick', 'setSupplier(this.id)');
+        button.className = "btn btn-primary btn-lg btn-supp";
+        button.innerText = _supplier.name;
+        document.getElementById('supplier-select').appendChild(button);
     }
 
     class Product {
@@ -196,20 +204,25 @@
     let products = [];
     let productsValid = false;
 
+    const fileInput = document.getElementById("file-input");
     const dropZone = document.getElementById("drop_zone");
+    const dropZonePrompt = document.getElementsByClassName("dropzone-prompt")[0]
     const copyCompleteDiv = document.getElementById("copy-complete");
 
     function setSupplier(id) {
         supplier = id;
+        let _supplier = suppliers[id];
         document.getElementById("div-supp").hidden = true;
-        document.getElementById("import-title").innerText = "Import " + suppliers[supplier].name + " order";
-        if(suppliers[supplier].type === "csv") {
-            dropZone.getElementsByClassName("dropzone-prompt")[0].innerText = "Drop " + suppliers[supplier].name + " basket .csv here";
+        document.getElementById("import-title").innerText = "Import " + _supplier.name + " order";
+        if(_supplier.type === "csv") {
+            dropZonePrompt.innerHTML = "Drop " + _supplier.name + " basket " + _supplier.fileType + " here";
+            dropZonePrompt.innerHTML += '<p style="font-size: 15px">(or click to choose a file)</p>';
         }
         document.getElementById("div-process").hidden = false;
+        document.getElementById("file-input").setAttribute("accept", _supplier.fileType)
     }
 
-    function StripHeader(header) {
+    function stripHeader(header) {
         return header.replace(/[^A-z]/g, '').toLowerCase()
     }
 
@@ -233,9 +246,9 @@
             complete: function (results) {
                 let index = {}
                 for (const [destination, sources] of Object.entries(translations)) {
-                    for (const source of sources.map(StripHeader)) {
+                    for (const source of sources.map(stripHeader)) {
                         if (results.meta.fields.includes(source)) {
-                            index[StripHeader(destination)] = source;
+                            index[stripHeader(destination)] = source;
                             break;
                         }
                     }
@@ -243,11 +256,12 @@
 
                 let errors = []
                 for (const error of results.errors) {
+                    if(! ['TooFewFields', 'TooManyFields'].includes(error.code) )
                     errors.push("<b>Row " + error.row + ":</b> " + error.message);
                 }
                 if (errors.length === 0) {
                     for (const [destination, sources] of Object.entries(translations)) {
-                        if (!index.hasOwnProperty(StripHeader(destination))) {
+                        if (!index.hasOwnProperty(stripHeader(destination))) {
                             errors.push('<b>' + destination + '</b> column not found, tried looking for ' + sources.map((s) => '"'+s+'"').join(", "));
                         }
                     }
@@ -258,6 +272,9 @@
                 } else {
                     let products = [];
                     for (const line of results.data) {
+                        if(Object.entries(line).every(([, value]) => value === "")) {
+                            break;
+                        }
                         products.push(new Product(
                             line[index.description],
                             line[index.quantity],
@@ -266,37 +283,13 @@
                     }
                     callback(products, errors);
                 }
-
-                // if (errors.length !== 0) {
-                //     let errorBox = document.getElementById("drop_zone-error");
-                //     const messageLimit = 5;
-                //     if (errors.length > messageLimit) {
-                //         let remaining = errors.length - messageLimit;
-                //         errors = errors.slice(0, messageLimit);
-                //         errors.push("<b>" + remaining + " more...</b>");
-                //     }
-                //     errorBox.innerHTML = errors.join("<br>");
-                //     errorBox.hidden = false;
-                //     ProcessProducts(products);
-                //     return;
-                // } else {
-                //     for (const line of results.data) {
-                //         products.push(new Product(
-                //             line[index.description],
-                //             line[index.quantity],
-                //             line[index.price],
-                //         ))
-                //     }
-                // }
-                //
-                // ProcessProducts(products);
             },
             delimiter: ',',
             header: true,
-            transformHeader: StripHeader,
+            transformHeader: stripHeader,
             dynamicTyping: function (header) {
                 for(const source of translations.Quantity.concat(translations.Price)) {
-                    if (header === StripHeader(source)) {
+                    if (header === stripHeader(source)) {
                         return true;
                     }
                 }
@@ -304,27 +297,6 @@
             }
         });
     }
-
-    // function ProcessProducts(_products) {
-    //     products = _products;
-    //     let successBox = document.getElementById("drop_zone-success");
-    //     if(products.length === 0) {
-    //         successBox.hidden = true;
-    //         productsValid = false;
-    //     } else {
-    //         let productCount = 0;
-    //         let totalCost = 0;
-    //         for (const product of products) {
-    //             productCount += product.quantity;
-    //             totalCost += product.quantity * product.price;
-    //         }
-    //         successBox.innerText = productCount + " products found, total cost: " + totalCost.toFixed(2);
-    //         successBox.hidden = false;
-    //         productsValid = true;
-    //     }
-    //
-    //     ValidatePage();
-    // }
 
     function InputChanged(element) {
         copyCompleteDiv.hidden = true;
@@ -441,10 +413,7 @@
         callback(success, contents);
     }
 
-    function handleFileSelect(evt) {
-        evt.stopPropagation();
-        evt.preventDefault();
-
+    function handleFile(file, error) {
         let errorBox = document.getElementById("drop_zone-error");
         let successBox = document.getElementById("drop_zone-success");
 
@@ -460,15 +429,14 @@
         document.getElementById("drop_zone-success").hidden = true;
 
         // noinspection JSUnresolvedVariable
-        if(!(evt.dataTransfer.items[0].webkitGetAsEntry().isFile && evt.dataTransfer.files.length === 1)) {
-            errorBox.innerText = "Please upload a single file and try again."
+        if(error) {
+            errorBox.innerText = error;
             errorBox.hidden = false;
             dropzoneFilename.hidden = true;
             dropzonePrompt.hidden = false;
             return;
         }
 
-        let file = evt.dataTransfer.files[0];
         dropzoneFilename.innerText = file.name;
         dropzoneFilename.hidden = false;
         dropzonePrompt.hidden = true;
@@ -510,15 +478,37 @@
         }
     }
 
+    function handleFileInput() {
+        if (this.files.length !== 1) {
+            handleFile(null, "Please upload a single file and try again.");
+        } else {
+            handleFile(this.files[0], "");
+        }
+    }
+
+    function handleFileDrop(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+
+        // noinspection JSUnresolvedVariable
+        if(!(evt.dataTransfer.items[0].webkitGetAsEntry().isFile && evt.dataTransfer.files.length === 1)) {
+            handleFile(null, "Please upload a single file and try again.");
+        } else {
+            handleFile(evt.dataTransfer.files[0], "");
+        }
+    }
+
     function handleDragOver(evt) {
         evt.stopPropagation();
         evt.preventDefault();
         evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
     }
 
+    fileInput.addEventListener('change', handleFileInput, false);
+
     // Setup the dnd listeners.
     dropZone.addEventListener('dragover', handleDragOver, false);
-    dropZone.addEventListener('drop', handleFileSelect, false);
+    dropZone.addEventListener('drop', handleFileDrop, false);
 </script>
 
 </body>
