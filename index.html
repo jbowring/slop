@@ -88,7 +88,7 @@
 
             <label for="file-input" id="file-input-label" hidden></label>
             <input style="display: none" type="file" id="file-input">
-            <div id="drop_zone" onclick="document.getElementById('file-input').click()">
+            <div id="drop_zone" onclick="fileInput.click()">
                 <span style="font-size: 40pt" class="glyphicon glyphicon-file"></span><br>
                 <p class="dropzone-prompt"></p>
                 <p class="dropzone-filename" hidden></p>
@@ -187,7 +187,7 @@
             dropZonePrompt.innerHTML += '<p style="font-size: 15px">(or click to choose a file)</p>';
         }
         document.getElementById("div-process").hidden = false;
-        document.getElementById("file-input").setAttribute("accept", _supplier.fileType)
+        fileInput.setAttribute("accept", _supplier.fileType)
     }
 
     function stripHeader(header) {
@@ -292,7 +292,6 @@
     function FieldValid(id) {
         switch(id) {
             case "category":
-                return document.getElementById(id).value.length > 0;
             case "project":
                 return document.getElementById(id).value.length > 0;
             default:
@@ -310,8 +309,7 @@
     }
 
     function Generate() {
-        let copyComplete = document.getElementById("copy-complete");
-        copyComplete.hidden = true;
+        copyCompleteDiv.hidden = true;
         if (ValidatePage()) {
             let out = "";
             const category = document.getElementById("category").value;
@@ -334,7 +332,7 @@
             WriteClipboard(out, (success) => {
                 if(success) {
                     setTimeout(() => {
-                        copyComplete.hidden = false;
+                        copyCompleteDiv.hidden = false;
                     }, 100);
                 }
             })
@@ -403,7 +401,7 @@
         warningBox.hidden = true;
 
         copyCompleteDiv.hidden = true;
-        document.getElementById("drop_zone-success").hidden = true;
+        successBox.hidden = true;
 
         // noinspection JSUnresolvedVariable
         if(error) {
