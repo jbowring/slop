@@ -86,6 +86,7 @@
         <div class="col-sm-6" style="border-right: 1px solid #ccc;">
             <h2 id="import-title">Import DigiKey order</h2>
 
+            <label for="file-input" id="file-input-label" hidden></label>
             <input style="display: none" type="file" id="file-input">
             <div id="drop_zone" onclick="document.getElementById('file-input').click()">
                 <span style="font-size: 40pt" class="glyphicon glyphicon-file"></span><br>
@@ -116,7 +117,7 @@
             <div id="copy-complete" hidden>
                 <div class="alert alert-info">
                     <strong>Copied!</strong>
-                    To add the data to a purchase order, go to <i>Edit</i> > <i>Paste Rows Append</i>
+                    To add the data to a purchase order, click anywhere in the table and go to <i>Edit</i> > <i>Paste Rows Append</i>
                 </div>
                 <i class="note">
                     Warning: this might not work if the PO columns are not in their default order in SyteLine
@@ -180,6 +181,7 @@
         document.getElementById("div-supp").hidden = true;
         document.getElementById("import-title").innerText = "Import " + _supplier.name + " order";
         if(_supplier.type === "csv") {
+            document.getElementById('file-input-label').innerText = "Upload " + _supplier.name + " basket " + _supplier.fileType + " file";
             dropZonePrompt.innerHTML = "Drop " + _supplier.name + " basket " + _supplier.fileType + " here";
             dropZonePrompt.innerHTML += '<p style="font-size: 15px">(or click to choose a file)</p>';
         }
