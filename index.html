@@ -96,6 +96,7 @@
             <br>
             <div class="alert alert-danger" id="drop_zone-error" hidden></div>
             <div class="alert alert-success" id="drop_zone-success" hidden></div>
+            <div class="alert alert-warning" id="drop_zone-warning" hidden><b>Warning: </b> some data may be missing</div>
         </div>
 
         <div class="col-sm-6" id="export-col">
@@ -238,17 +239,23 @@
                     callback([], errors);
                 } else {
                     let products = [];
+                    let showWarning = false, end = false;
                     for (const line of results.data) {
                         if(Object.entries(line).every(([, value]) => value === "")) {
                             break;
                         }
-                        products.push(new Product(
-                            line[index.description],
-                            line[index.quantity],
-                            line[index.price],
-                        ))
+                        if(isNaN(line[index.quantity]) || isNaN(line[index.price])) {
+                            end = true;
+                        } else {
+                            showWarning = end;
+                            products.push(new Product(
+                                line[index.description],
+                                line[index.quantity],
+                                line[index.price],
+                            ))
+                        }
                     }
-                    callback(products, errors);
+                    callback(products, errors, showWarning);
                 }
             },
             delimiter: ',',
@@ -383,6 +390,7 @@
     function handleFile(file, error) {
         let errorBox = document.getElementById("drop_zone-error");
         let successBox = document.getElementById("drop_zone-success");
+        let warningBox = document.getElementById("drop_zone-warning");
 
         let dropzoneFilename = dropZone.getElementsByClassName("dropzone-filename")[0];
         let dropzonePrompt = dropZone.getElementsByClassName("dropzone-prompt")[0];
@@ -391,6 +399,8 @@
         errorBox.hidden = true;
         let successBoxWasHidden = successBox.hidden;
         successBox.hidden = true;
+        let warningBoxWasHidden = warningBox.hidden;
+        warningBox.hidden = true;
 
         copyCompleteDiv.hidden = true;
         document.getElementById("drop_zone-success").hidden = true;
@@ -408,7 +418,7 @@
         dropzoneFilename.hidden = false;
         dropzonePrompt.hidden = true;
 
-        function processDropzoneProducts(_products, errors) {
+        function processDropzoneProducts(_products, errors, showWarning) {
             if(errors.length > 0) {
                 products = []
                 productsValid = false;
@@ -431,7 +441,10 @@
                         productCount += product.quantity;
                         totalCost += product.quantity * product.price;
                     }
-                    successBox.innerText = productCount + " products found, total cost: " + totalCost.toFixed(2);
+                    successBox.innerHTML = '<b>' + products.length + ' item' + (products.length>1?'s':'') + ' found </b><br>Total quantity: ' + productCount + "<br>Total cost: " + totalCost.toFixed(2);
+                    if(showWarning) {
+                        setTimeout(() => warningBox.hidden = false, warningBoxWasHidden ? 0: 100);
+                    }
                     productsValid = true;
                     setTimeout(() => successBox.hidden = false, successBoxWasHidden ? 0: 100);
                 }
