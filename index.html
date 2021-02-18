@@ -62,6 +62,7 @@
         footer {
             position: absolute;
             bottom: 0;
+            /*width: 100%;*/
             /*width: calc(100% - 84px);*/
             /*height: 80px;*/
             height: 40px;
@@ -72,9 +73,11 @@
 
 <div class="container">
     <h1>SyteLine Order Processor</h1>
-    <i>Turn online orders into SyteLine POs fast and easy!*</i>
+    <i>Turn online orders into SyteLine POs fast and easy!</i>
     <p>This tool will probably have bugs. Please verify its outputs. </p>
-    <p class="note">All order data is processed in the browser. Nothing is sent to the server.</p>
+    <p class="note">All order data is processed in the browser. Nothing is sent to the server.
+    <span style="float: right;">Joel Bowring</span>
+    </p>
     <hr>
 
     <div class="row" id="div-supp">
@@ -126,14 +129,6 @@
             </div>
         </div>
     </div>
-
-    <footer>
-<!--        <hr>-->
-        <p style="text-align: left">
-            <i>*speed and/or ease not guaranteed</i>
-<!--            <span style="float: right; color: #d0d0d0">Joel Bowring</span>-->
-        </p>
-    </footer>
 </div>
 
 <script>
