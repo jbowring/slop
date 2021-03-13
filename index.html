@@ -230,11 +230,9 @@
         }
 
         if(headerRow === null) {
-            callback([], [Object.keys(translations).join(", ") + " headers not found"])
+            callback([], [Object.keys(translations).join(", ") + " headers not found"]);
+            return;
         }
-
-        // Matches "£"-style or "GBP"-style currency markers
-        let currencyRegex = /(?:'?[£$€]|[A-Z]{3})(.+)/
 
         let products = [], errors = [];
         let showWarning = false, end = false;
@@ -243,14 +241,22 @@
                 break;
             }
 
-            let priceString = line[headerMap.Price]
-            let priceStringMatch = priceString.match(currencyRegex);
-            if (priceStringMatch !== null) {
-                priceString = priceStringMatch[1];
+            // Remove extraneous characters
+            let priceString = line[headerMap.Price].replace(/[^0-9.,]/g, '')
+
+            let separators = priceString.match(/[^0-9]/g)
+            if (separators !== null && separators.length > 0) {
+                let decimalSeparator = separators[separators.length - 1]
+                // Remove all other separators
+                priceString = priceString.replace(RegExp('[^0-9' + decimalSeparator + ']', 'g'), '')
+                // Format with decimal point
+                if (decimalSeparator !== '.') {
+                    priceString = priceString.replace(/[^0-9]/g, '.')
+                }
             }
             let price = parseFloat(priceString);
 
-            let quantity = parseFloat(line[headerMap.Quantity]);
+            let quantity = parseFloat(line[headerMap.Quantity].replaceAll(',', ''));
 
             if(line[headerMap.Description] === "" || isNaN(quantity) || isNaN(price)) {
                 end = true;
@@ -268,7 +274,11 @@
         callback(products, errors, showWarning);
     }
 
-    function CsvParse(file, callback) {
+    function CsvParse(file, callback, config) {
+        if (!config) {
+            config = {};
+        }
+
         Papa.parse(file, {
             complete: function (results) {
                 let errors = [];
@@ -283,7 +293,18 @@
                     findData(results.data, callback);
                 }
             },
-            // delimiter: ',',
+            delimiter: input => {
+                let delimiter = ',';
+                if ('delimiter' in config) {
+                    delimiter = config.delimiter;
+                }
+                let sepMatch = input.match(/^sep=([^\r\n])/i);
+                if (sepMatch !== null && sepMatch.length > 1) {
+                    delimiter = sepMatch[1];
+                }
+
+                return delimiter;
+            },
         });
     }
 
