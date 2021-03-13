@@ -144,6 +144,14 @@
             type: "csv",
             fileType: ".csv",
         },
+        "avnet": {
+            name: "Avnet",
+            type: "csv",
+            fileType: ".csv",
+            config: {
+                delimiter: '\t',
+            }
+        }
     }
 
     for (const [id, _supplier] of Object.entries(suppliers)) {
