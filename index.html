@@ -22,6 +22,9 @@
     <!-- PapaParse -->
     <script src="./papaparse/papaparse.min.js"></script>
 
+    <!-- SheetJS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+
     <style>
         body {
             font-family: Roboto, "Open Sans", sans-serif;
@@ -76,7 +79,6 @@
     <i>Turn online orders into SyteLine POs fast and easy!</i>
     <p>This tool will probably have bugs. Please verify its outputs. </p>
     <p class="note">All order data is processed in the browser. Nothing is sent to the server.
-    <span style="float: right;">Joel Bowring</span>
     </p>
     <hr>
 
@@ -151,7 +153,12 @@
             config: {
                 delimiter: '\t',
             }
-        }
+        },
+        "mouser": {
+            name: "Mouser",
+            type: "xls",
+            fileType: ".xls",
+        },
     }
 
     for (const [id, _supplier] of Object.entries(suppliers)) {
@@ -184,11 +191,9 @@
         let _supplier = suppliers[id];
         document.getElementById("div-supp").hidden = true;
         document.getElementById("import-title").innerText = "Import " + _supplier.name + " order";
-        if(_supplier.type === "csv") {
-            document.getElementById('file-input-label').innerText = "Upload " + _supplier.name + " basket " + _supplier.fileType + " file";
-            dropZonePrompt.innerHTML = "Drop " + _supplier.name + " basket " + _supplier.fileType + " here";
-            dropZonePrompt.innerHTML += '<p style="font-size: 15px">(or click to choose a file)</p>';
-        }
+        document.getElementById('file-input-label').innerText = "Upload " + _supplier.name + " basket " + _supplier.fileType + " file";
+        dropZonePrompt.innerHTML = "Drop " + _supplier.name + " basket " + _supplier.fileType + " here";
+        dropZonePrompt.innerHTML += '<p style="font-size: 15px">(or click to choose a file)</p>';
         document.getElementById("div-process").hidden = false;
         fileInput.setAttribute("accept", _supplier.fileType)
     }
@@ -209,7 +214,7 @@
             ],
             Price: [
                 /unit(?:cost|price)/,
-                /price(?:[A-Z]{,3}|unit)/,
+                /price(?:[A-Z]{3}|unit)/,
             ],
         }
 
@@ -223,9 +228,9 @@
         for (let row = 0; row < data.length; row++) {
             headerMap = {};
             if (Object.keys(translations).every(header => {
-                for (let col = 0; col < data[row].length; col++) {
+                for (const [col, cell] of Object.entries(data[row])) {
                     if (!Object.values(headerMap).includes(col) && translations[header].some(regex => {
-                        return data[row][col].replace(/\W/g, '').match(regex) !== null;
+                        return cell.replace(/\W/g, '').match(regex) !== null;
                     })) {
                         headerMap[header] = col;
                         return true;
@@ -280,6 +285,24 @@
             }
         }
         callback(products, errors, showWarning);
+    }
+
+    function XlsParse(file, callback, config) {
+        if (!config) {
+            config = {};
+        }
+
+        let reader = new FileReader();
+        reader.onload = file => {
+            let data = new Uint8Array(file.target.result);
+            let workbook = XLSX.read(data, {type: 'array'});
+            if(workbook.Sheets.length < 1 || workbook.SheetNames.length < 1) {
+                callback([], "No sheets found in workbook")
+                return;
+            }
+            findData(XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {raw:false, header:1}), callback);
+        };
+        reader.readAsArrayBuffer(file);
     }
 
     function CsvParse(file, callback, config) {
@@ -495,8 +518,15 @@
             ValidatePage();
         }
 
+        let config = {}
+        if ('config' in suppliers[supplier]) {
+            config = suppliers[supplier].config;
+        }
+
         if(suppliers[supplier].type === "csv") {
-            CsvParse(file, processDropzoneProducts);
+            CsvParse(file, processDropzoneProducts, config);
+        } else if(suppliers[supplier].type === "xls") {
+            XlsParse(file, processDropzoneProducts, config);
         }
     }
 
