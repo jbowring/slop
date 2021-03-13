@@ -188,82 +188,101 @@
     function stripHeader(header) {
         return header.replace(/[^A-z]/g, '').toLowerCase()
     }
-
-    function CsvParse(file, callback) {
+    
+    function findData(data, callback) {
         const translations = {
             Description: [
-                "Manufacturer / Description",
-                "Description",
+                /(?:manufacturer)?description/,
+                /products/,
             ],
             Quantity: [
-                "Quantity",
-                "Qty",
+                /quantity/,
+                /(?:order)?qty/,
             ],
             Price: [
-                "Unit Cost",
-                "Unit Price",
+                /unit(?:cost|price)/,
+                /price[a-z]{,3}/,
             ],
         }
 
-        Papa.parse(file, {
-            complete: function (results) {
-                let index = {}
-                for (const [destination, sources] of Object.entries(translations)) {
-                    for (const source of sources.map(stripHeader)) {
-                        if (results.meta.fields.includes(source)) {
-                            index[stripHeader(destination)] = source;
-                            break;
-                        }
+        // Add "ignore case" flag
+        for (const translation in translations) {
+            translations[translation] = translations[translation].map(regex => RegExp(regex.source, "i"));
+        }
+
+        let headerMap;
+        let headerRow = null;
+        for (let row = 0; row < data.length; row++) {
+            headerMap = {};
+            if (Object.keys(translations).every(header => {
+                for (let col = 0; col < data[row].length; col++) {
+                    if (!Object.values(headerMap).includes(col) && translations[header].some(regex => {
+                        return data[row][col].replace(/\W/g, '').match(regex) !== null;
+                    })) {
+                        headerMap[header] = col;
+                        return true;
                     }
                 }
+            })) {
+                headerRow = row;
+                break;
+            }
+        }
 
-                let errors = []
+        if(headerRow === null) {
+            callback([], [Object.keys(translations).join(", ") + " headers not found"])
+        }
+
+        let currencyRegex = /(?:[£$€]|[A-Z]{3}\s)(.+)/
+        let products = [], errors = [];
+        let showWarning = false, end = false;
+        for (const line of data.slice(headerRow+1)) {
+            if(line.every(value => value === "")) {
+                break;
+            }
+
+            let priceString = line[headerMap.Price]
+            let priceStringMatch = priceString.match(currencyRegex);
+            if (priceStringMatch !== null) {
+                priceString = priceStringMatch.groups[1];
+            }
+            let price = parseFloat(priceString);
+
+            let quantity = parseFloat(line[headerMap.Quantity]);
+
+            if(line[headerMap.Description] === "" || isNaN(quantity) || isNaN(price)) {
+                end = true;
+            } else {
+                if(end) {
+                    showWarning = true;
+                }
+                products.push(new Product(
+                    line[headerMap.Description],
+                    quantity,
+                    price,
+                ))
+            }
+        }
+        console.table(products);
+        callback(products, errors, showWarning);
+    }
+
+    function CsvParse(file, callback) {
+        Papa.parse(file, {
+            complete: function (results) {
+                let errors = [];
                 for (const error of results.errors) {
                     if(! ['TooFewFields', 'TooManyFields'].includes(error.code) )
                     errors.push("<b>Row " + error.row + ":</b> " + error.message);
-                }
-                if (errors.length === 0) {
-                    for (const [destination, sources] of Object.entries(translations)) {
-                        if (!index.hasOwnProperty(stripHeader(destination))) {
-                            errors.push('<b>' + destination + '</b> column not found, tried looking for ' + sources.map((s) => '"'+s+'"').join(", "));
-                        }
-                    }
                 }
 
                 if(errors.length !== 0) {
                     callback([], errors);
                 } else {
-                    let products = [];
-                    let showWarning = false, end = false;
-                    for (const line of results.data) {
-                        if(Object.entries(line).every(([, value]) => value === "")) {
-                            break;
-                        }
-                        if(isNaN(line[index.quantity]) || isNaN(line[index.price])) {
-                            end = true;
-                        } else {
-                            showWarning = end;
-                            products.push(new Product(
-                                line[index.description],
-                                line[index.quantity],
-                                line[index.price],
-                            ))
-                        }
-                    }
-                    callback(products, errors, showWarning);
+                    findData(results.data, callback);
                 }
             },
-            delimiter: ',',
-            header: true,
-            transformHeader: stripHeader,
-            dynamicTyping: function (header) {
-                for(const source of translations.Quantity.concat(translations.Price)) {
-                    if (header === stripHeader(source)) {
-                        return true;
-                    }
-                }
-                return false;
-            }
+            // delimiter: ',',
         });
     }
 
