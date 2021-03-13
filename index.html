@@ -201,7 +201,7 @@
             ],
             Price: [
                 /unit(?:cost|price)/,
-                /price[a-z]{,3}/,
+                /price(?:[A-Z]{,3}|unit)/,
             ],
         }
 
@@ -233,7 +233,9 @@
             callback([], [Object.keys(translations).join(", ") + " headers not found"])
         }
 
-        let currencyRegex = /(?:[£$€]|[A-Z]{3}\s)(.+)/
+        // Matches "£"-style or "GBP"-style currency markers
+        let currencyRegex = /(?:'?[£$€]|[A-Z]{3})(.+)/
+
         let products = [], errors = [];
         let showWarning = false, end = false;
         for (const line of data.slice(headerRow+1)) {
@@ -244,7 +246,7 @@
             let priceString = line[headerMap.Price]
             let priceStringMatch = priceString.match(currencyRegex);
             if (priceStringMatch !== null) {
-                priceString = priceStringMatch.groups[1];
+                priceString = priceStringMatch[1];
             }
             let price = parseFloat(priceString);
 
@@ -263,7 +265,6 @@
                 ))
             }
         }
-        console.table(products);
         callback(products, errors, showWarning);
     }
 
