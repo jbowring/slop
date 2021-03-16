@@ -25,7 +25,10 @@
     <!-- SheetJS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
 
+    <!-- Esprima -->
     <script src="https://unpkg.com/esprima@~4.0/dist/esprima.js"></script>
+
+    <!-- Escodegen -->
     <script src="https://estools.github.io/escodegen/escodegen.browser.js"></script>
 
     <style>
@@ -265,8 +268,11 @@
                     let breakPrices = {};
                     if(typeof basketBreakPrice === 'object' && 'breakPrices' in basketBreakPrice) {
                         for (const breakPrice of basketBreakPrice.breakPrices) {
-                            let quantity = parseFloat(breakPrice.quantity);
-                            let price = parseFloat(breakPrice.price);
+                            let quantity = NaN, price = NaN;
+                            if ('quantity' in breakPrice && 'price' in breakPrice) {
+                                quantity = parseFloat(breakPrice.quantity);
+                                price = parseFloat(breakPrice.price);
+                            }
                             if (!isNaN(quantity) && !isNaN(price)) {
                                 breakPrices[quantity] = price;
                             } else {
@@ -279,14 +285,14 @@
 
                     let quantity = NaN;
                     try {
-                        quantity = parseFloat(product.orderQuantity.quantity)
+                        if ('orderQuantity' in product && 'quantity' in product.orderQuantity) {
+                            quantity = parseFloat(product.orderQuantity.quantity)
+                        }
                     } catch {}
 
                     if(
                         Object.keys(breakPrices).length !== 0 &&
                         'description' in product &&
-                        'orderQuantity' in product &&
-                        'quantity' in product.orderQuantity &&
                         !isNaN(quantity)
                     ) {
                         for (const breakQuantity of Object.keys(breakPrices).sort().reverse()) {
