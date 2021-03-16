@@ -225,7 +225,7 @@
 
             let pageData;
             let parsed = esprima.parseScript(rsJs, { tolerant: true })
-            if (parsed && parsed.body) {
+            if (parsed !== null && 'body' in parsed) {
                 for (const bodyKey of parsed.body) {
                     if (bodyKey.type === "VariableDeclaration" && 'declarations' in bodyKey) {
                         for (const declaration of bodyKey.declarations) {
@@ -249,7 +249,7 @@
             let products = [];
             let errors = [];
             let showWarning = false;
-            if('products' in pageData && 'basketBreakPrices' in pageData) {
+            if(typeof pageData === 'object' && 'products' in pageData && 'basketBreakPrices' in pageData) {
                 if(pageData.products.length !== pageData.basketBreakPrices.length) {
                     showWarning = true;
                 }
