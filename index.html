@@ -25,6 +25,9 @@
     <!-- SheetJS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
 
+    <script src="https://unpkg.com/esprima@~4.0/dist/esprima.js"></script>
+    <script src="https://estools.github.io/escodegen/escodegen.browser.js"></script>
+
     <style>
         body {
             font-family: Roboto, "Open Sans", sans-serif;
@@ -155,9 +158,14 @@
             }
         },
         "mouser": {
-            name: "Mouser",
+            name: "Mouser (beta)",
             type: "xls",
             fileType: ".xls",
+        },
+        "rs": {
+            name: "RS Components (beta)",
+            type: "rs",
+            fileType: ".html",
         },
     }
 
@@ -198,8 +206,110 @@
         fileInput.setAttribute("accept", _supplier.fileType)
     }
 
-    function stripHeader(header) {
-        return header.replace(/[^A-z]/g, '').toLowerCase()
+    function RsParse(file, callback, config) {
+        let reader = new FileReader();
+        reader.onerror = () => {
+            callback([], ["Failed to read file:\n" + reader.error])
+        };
+        reader.onload = file => {
+            let rs = document.createElement('html');
+            rs.innerHTML = file.target.result
+            let rsJs = "";
+            for (const script of rs.getElementsByTagName('script')) {
+                rsJs += script.innerText + "\n"
+            }
+            rs.remove();
+
+            let pageData;
+            let parsed = esprima.parseScript(rsJs, { tolerant: true })
+            if (parsed && parsed.body) {
+                for (const bodyKey of parsed.body) {
+                    if (bodyKey.type === "VariableDeclaration" && 'declarations' in bodyKey) {
+                        for (const declaration of bodyKey.declarations) {
+                            if (
+                                declaration.type === "VariableDeclarator" &&
+                                'id' in declaration &&
+                                declaration.id.type === "Identifier" &&
+                                declaration.id.name === "pageData" &&
+                                'init' in declaration
+                            ) {
+                                pageData = JSON.parse(escodegen.generate(declaration.init, { format: {json: true} }));
+                            }
+                        }
+                    }
+                }
+            } else {
+                callback([], ["Failed to parse HTML"]);
+                return;
+            }
+
+            let products = [];
+            let errors = [];
+            let showWarning = false;
+            if('products' in pageData && 'basketBreakPrices' in pageData) {
+                if(pageData.products.length !== pageData.basketBreakPrices.length) {
+                    showWarning = true;
+                }
+                let numProducts = Math.min(pageData.products.length, pageData.basketBreakPrices.length)
+
+                for (let i = 0; i < numProducts; i++) {
+                    let basketBreakPrice = pageData.basketBreakPrices[i];
+                    if (typeof basketBreakPrice === 'string') {
+                        try {
+                            basketBreakPrice = JSON.parse(basketBreakPrice)
+                        } catch {}
+                    }
+
+                    const product = pageData.products[i];
+
+                    let breakPrices = {};
+                    if(typeof basketBreakPrice === 'object' && 'breakPrices' in basketBreakPrice) {
+                        for (const breakPrice of basketBreakPrice.breakPrices) {
+                            let quantity = parseFloat(breakPrice.quantity);
+                            let price = parseFloat(breakPrice.price);
+                            if (!isNaN(quantity) && !isNaN(price)) {
+                                breakPrices[quantity] = price;
+                            } else {
+                                showWarning = true;
+                                breakPrices = {};
+                                break;
+                            }
+                        }
+                    }
+
+                    let quantity = NaN;
+                    try {
+                        quantity = parseFloat(product.orderQuantity.quantity)
+                    } catch {}
+
+                    if(
+                        Object.keys(breakPrices).length !== 0 &&
+                        'description' in product &&
+                        'orderQuantity' in product &&
+                        'quantity' in product.orderQuantity &&
+                        !isNaN(quantity)
+                    ) {
+                        for (const breakQuantity of Object.keys(breakPrices).sort().reverse()) {
+                            if (quantity >= breakQuantity) {
+                                products.push(new Product(
+                                    String(product.description),
+                                    quantity,
+                                    breakPrices[breakQuantity],
+                                ))
+                                break;
+                            }
+                        }
+                    } else {
+                        showWarning = true;
+                    }
+                }
+            } else {
+                errors.push('Data not found in webpage')
+            }
+            console.table(products)
+            callback(products, errors, showWarning)
+        };
+        reader.readAsText(file);
     }
     
     function findData(data, callback) {
@@ -297,10 +407,13 @@
             let data = new Uint8Array(file.target.result);
             let workbook = XLSX.read(data, {type: 'array'});
             if(workbook.Sheets.length < 1 || workbook.SheetNames.length < 1) {
-                callback([], "No sheets found in workbook")
+                callback([], ["No sheets found in workbook"])
                 return;
             }
             findData(XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {raw:false, header:1}), callback);
+        };
+        reader.onerror = () => {
+            callback([], ["Failed to read file:\n" + reader.error])
         };
         reader.readAsArrayBuffer(file);
     }
@@ -527,6 +640,8 @@
             CsvParse(file, processDropzoneProducts, config);
         } else if(suppliers[supplier].type === "xls") {
             XlsParse(file, processDropzoneProducts, config);
+        } else if(suppliers[supplier].type === "rs") {
+            RsParse(file, processDropzoneProducts, config);
         }
     }
 
