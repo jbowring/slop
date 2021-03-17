@@ -218,13 +218,10 @@
             callback([], ["Failed to read file:\n" + reader.error])
         };
         reader.onload = file => {
-            let rs = document.createElement('html');
-            rs.innerHTML = file.target.result
             let rsJs = "";
-            for (const script of rs.getElementsByTagName('script')) {
-                rsJs += script.innerText + "\n"
+            for (const script of new DOMParser().parseFromString(file.target.result, "text/html").scripts) {
+                rsJs += script.text + "\n"
             }
-            rs.remove();
 
             let pageData;
             let parsed = esprima.parseScript(rsJs, { tolerant: true })
