@@ -158,17 +158,20 @@
             fileType: ".csv",
             config: {
                 delimiter: '\t',
-            }
+            },
+            beta: true,
         },
         "mouser": {
             name: "Mouser",
             type: "xls",
             fileType: ".xls",
+            beta: true,
         },
         "rs": {
             name: "RS",
             type: "rs",
             fileType: ".html",
+            beta: true,
         },
     }
 
@@ -177,7 +180,7 @@
         button.id = id;
         button.setAttribute('onclick', 'setSupplier(this.id)');
         button.className = "btn btn-primary btn-lg btn-supp";
-        button.innerText = _supplier.name;
+        button.innerText = _supplier.name + (_supplier.beta ? ' (beta)' : '');
         document.getElementById('supplier-select').appendChild(button);
     }
 
