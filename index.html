@@ -107,7 +107,7 @@
             <br>
             <div class="alert alert-danger" id="drop_zone-error" hidden></div>
             <div class="alert alert-success" id="drop_zone-success" hidden></div>
-            <div class="alert alert-warning" id="drop_zone-warning" hidden><b>Warning: </b> some data may be missing</div>
+            <div class="alert alert-warning" id="drop_zone-warning" hidden><b>Warning: </b> some data may be missing or inaccurate</div>
         </div>
 
         <div class="col-sm-6" id="export-col">
@@ -218,8 +218,8 @@
             callback([], ["Failed to read file:\n" + reader.error])
         };
         reader.onload = file => {
-            let rsJs = "";
-            for (const script of new DOMParser().parseFromString(file.target.result, "text/html").scripts) {
+            let rsJs = "", parser = new DOMParser().parseFromString(file.target.result, "text/html");
+            for (const script of parser.scripts) {
                 rsJs += script.text + "\n"
             }
 
@@ -246,6 +246,23 @@
                 return;
             }
 
+            let shoppingBasketForm = parser.getElementById('shoppingBasketForm:WebBasketLineWidgetActionVALIDATION_ERROR_EVENT')
+            let totalCosts = []
+            for (const table of shoppingBasketForm.getElementsByClassName('cartTable')) {
+                for (const tbody of table.getElementsByTagName('tbody')) {
+                    for (const tr of tbody.getElementsByClassName('dataRow lineRow')) {
+                        for (const costTd of tr.getElementsByClassName('costTd')) {
+                            for (const costColumn of costTd.getElementsByClassName('costColumn')) {
+                                let cost = parseFloat(costColumn.innerText.replace(/[^0-9.]/g, ''))
+                                if (!isNaN(cost)) {
+                                    totalCosts.push(cost)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             let products = [];
             let errors = [];
             let showWarning = false;
@@ -256,7 +273,10 @@
                 pageData.products.length > 0 &&
                 pageData.basketBreakPrices.length > 0
             ) {
-                if(pageData.products.length !== pageData.basketBreakPrices.length) {
+                if(
+                    pageData.products.length !== pageData.basketBreakPrices.length ||
+                    pageData.products.length !== totalCosts.length
+                ) {
                     showWarning = true;
                 }
                 let numProducts = Math.min(pageData.products.length, pageData.basketBreakPrices.length)
@@ -303,10 +323,19 @@
                     ) {
                         for (const breakQuantity of Object.keys(breakPrices).sort().reverse()) {
                             if (quantity >= breakQuantity) {
+                                let price = breakPrices[breakQuantity]
+                                const pageDataDecimals = 3;
+                                if(i < totalCosts.length) {
+                                    let webpageCost = totalCosts[i] / quantity;
+                                    if(Math.abs(webpageCost - parseFloat(webpageCost.toFixed(pageDataDecimals))) > Number.EPSILON) {
+                                        // webpage cost is more accurate than pageData cost
+                                        price = webpageCost
+                                    }
+                                }
                                 products.push(new Product(
                                     String(product.description),
                                     quantity,
-                                    breakPrices[breakQuantity],
+                                    price,
                                 ))
                                 break;
                             }
