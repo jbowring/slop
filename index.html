@@ -249,7 +249,13 @@
             let products = [];
             let errors = [];
             let showWarning = false;
-            if(typeof pageData === 'object' && 'products' in pageData && 'basketBreakPrices' in pageData) {
+            if(
+                typeof pageData === 'object' &&
+                'products' in pageData &&
+                'basketBreakPrices' in pageData &&
+                pageData.products.length > 0 &&
+                pageData.basketBreakPrices.length > 0
+            ) {
                 if(pageData.products.length !== pageData.basketBreakPrices.length) {
                     showWarning = true;
                 }
