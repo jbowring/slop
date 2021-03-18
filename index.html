@@ -22,6 +22,9 @@
     <!-- PapaParse -->
     <script src="./papaparse/papaparse.min.js"></script>
 
+    <!-- SheetJS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+
     <style>
         body {
             font-family: Roboto, "Open Sans", sans-serif;
@@ -76,7 +79,6 @@
     <i>Turn online orders into SyteLine POs fast and easy!</i>
     <p>This tool will probably have bugs. Please verify its outputs. </p>
     <p class="note">All order data is processed in the browser. Nothing is sent to the server.
-    <span style="float: right;">Joel Bowring</span>
     </p>
     <hr>
 
@@ -144,6 +146,19 @@
             type: "csv",
             fileType: ".csv",
         },
+        "avnet": {
+            name: "Avnet",
+            type: "csv",
+            fileType: ".csv",
+            config: {
+                delimiter: '\t',
+            }
+        },
+        "mouser": {
+            name: "Mouser",
+            type: "xls",
+            fileType: ".xls",
+        },
     }
 
     for (const [id, _supplier] of Object.entries(suppliers)) {
@@ -176,11 +191,9 @@
         let _supplier = suppliers[id];
         document.getElementById("div-supp").hidden = true;
         document.getElementById("import-title").innerText = "Import " + _supplier.name + " order";
-        if(_supplier.type === "csv") {
-            document.getElementById('file-input-label').innerText = "Upload " + _supplier.name + " basket " + _supplier.fileType + " file";
-            dropZonePrompt.innerHTML = "Drop " + _supplier.name + " basket " + _supplier.fileType + " here";
-            dropZonePrompt.innerHTML += '<p style="font-size: 15px">(or click to choose a file)</p>';
-        }
+        document.getElementById('file-input-label').innerText = "Upload " + _supplier.name + " basket " + _supplier.fileType + " file";
+        dropZonePrompt.innerHTML = "Drop " + _supplier.name + " basket " + _supplier.fileType + " here";
+        dropZonePrompt.innerHTML += '<p style="font-size: 15px">(or click to choose a file)</p>';
         document.getElementById("div-process").hidden = false;
         fileInput.setAttribute("accept", _supplier.fileType)
     }
@@ -188,82 +201,141 @@
     function stripHeader(header) {
         return header.replace(/[^A-z]/g, '').toLowerCase()
     }
-
-    function CsvParse(file, callback) {
+    
+    function findData(data, callback) {
         const translations = {
             Description: [
-                "Manufacturer / Description",
-                "Description",
+                /(?:manufacturer)?description/,
+                /products/,
             ],
             Quantity: [
-                "Quantity",
-                "Qty",
+                /quantity/,
+                /(?:order)?qty/,
             ],
             Price: [
-                "Unit Cost",
-                "Unit Price",
+                /unit(?:cost|price)/,
+                /price(?:[A-Z]{3}|unit)/,
             ],
+        }
+
+        // Add "ignore case" flag
+        for (const translation in translations) {
+            translations[translation] = translations[translation].map(regex => RegExp(regex.source, "i"));
+        }
+
+        let headerMap;
+        let headerRow = null;
+        for (let row = 0; row < data.length; row++) {
+            headerMap = {};
+            if (Object.keys(translations).every(header => {
+                for (const [col, cell] of Object.entries(data[row])) {
+                    if (!Object.values(headerMap).includes(col) && translations[header].some(regex => {
+                        return cell.replace(/\W/g, '').match(regex) !== null;
+                    })) {
+                        headerMap[header] = col;
+                        return true;
+                    }
+                }
+            })) {
+                headerRow = row;
+                break;
+            }
+        }
+
+        if(headerRow === null) {
+            callback([], [Object.keys(translations).join(", ") + " headers not found"]);
+            return;
+        }
+
+        let products = [], errors = [];
+        let showWarning = false, end = false;
+        for (const line of data.slice(headerRow+1)) {
+            if(line.every(value => value === "")) {
+                break;
+            }
+
+            // Remove extraneous characters
+            let priceString = line[headerMap.Price].replace(/[^0-9.,]/g, '')
+
+            let separators = priceString.match(/[^0-9]/g)
+            if (separators !== null && separators.length > 0) {
+                let decimalSeparator = separators[separators.length - 1]
+                // Remove all other separators
+                priceString = priceString.replace(RegExp('[^0-9' + decimalSeparator + ']', 'g'), '')
+                // Format with decimal point
+                if (decimalSeparator !== '.') {
+                    priceString = priceString.replace(/[^0-9]/g, '.')
+                }
+            }
+            let price = parseFloat(priceString);
+
+            let quantity = parseFloat(line[headerMap.Quantity].replaceAll(',', ''));
+
+            if(line[headerMap.Description] === "" || isNaN(quantity) || isNaN(price)) {
+                end = true;
+            } else {
+                if(end) {
+                    showWarning = true;
+                }
+                products.push(new Product(
+                    line[headerMap.Description],
+                    quantity,
+                    price,
+                ))
+            }
+        }
+        callback(products, errors, showWarning);
+    }
+
+    function XlsParse(file, callback, config) {
+        if (!config) {
+            config = {};
+        }
+
+        let reader = new FileReader();
+        reader.onload = file => {
+            let data = new Uint8Array(file.target.result);
+            let workbook = XLSX.read(data, {type: 'array'});
+            if(workbook.Sheets.length < 1 || workbook.SheetNames.length < 1) {
+                callback([], "No sheets found in workbook")
+                return;
+            }
+            findData(XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {raw:false, header:1}), callback);
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    function CsvParse(file, callback, config) {
+        if (!config) {
+            config = {};
         }
 
         Papa.parse(file, {
             complete: function (results) {
-                let index = {}
-                for (const [destination, sources] of Object.entries(translations)) {
-                    for (const source of sources.map(stripHeader)) {
-                        if (results.meta.fields.includes(source)) {
-                            index[stripHeader(destination)] = source;
-                            break;
-                        }
-                    }
-                }
-
-                let errors = []
+                let errors = [];
                 for (const error of results.errors) {
                     if(! ['TooFewFields', 'TooManyFields'].includes(error.code) )
                     errors.push("<b>Row " + error.row + ":</b> " + error.message);
-                }
-                if (errors.length === 0) {
-                    for (const [destination, sources] of Object.entries(translations)) {
-                        if (!index.hasOwnProperty(stripHeader(destination))) {
-                            errors.push('<b>' + destination + '</b> column not found, tried looking for ' + sources.map((s) => '"'+s+'"').join(", "));
-                        }
-                    }
                 }
 
                 if(errors.length !== 0) {
                     callback([], errors);
                 } else {
-                    let products = [];
-                    let showWarning = false, end = false;
-                    for (const line of results.data) {
-                        if(Object.entries(line).every(([, value]) => value === "")) {
-                            break;
-                        }
-                        if(isNaN(line[index.quantity]) || isNaN(line[index.price])) {
-                            end = true;
-                        } else {
-                            showWarning = end;
-                            products.push(new Product(
-                                line[index.description],
-                                line[index.quantity],
-                                line[index.price],
-                            ))
-                        }
-                    }
-                    callback(products, errors, showWarning);
+                    findData(results.data, callback);
                 }
             },
-            delimiter: ',',
-            header: true,
-            transformHeader: stripHeader,
-            dynamicTyping: function (header) {
-                for(const source of translations.Quantity.concat(translations.Price)) {
-                    if (header === stripHeader(source)) {
-                        return true;
-                    }
+            delimiter: input => {
+                let delimiter = ',';
+                if ('delimiter' in config) {
+                    delimiter = config.delimiter;
                 }
-                return false;
-            }
+                let sepMatch = input.match(/^sep=([^\r\n])/i);
+                if (sepMatch !== null && sepMatch.length > 1) {
+                    delimiter = sepMatch[1];
+                }
+
+                return delimiter;
+            },
         });
     }
 
@@ -446,8 +518,15 @@
             ValidatePage();
         }
 
+        let config = {}
+        if ('config' in suppliers[supplier]) {
+            config = suppliers[supplier].config;
+        }
+
         if(suppliers[supplier].type === "csv") {
-            CsvParse(file, processDropzoneProducts);
+            CsvParse(file, processDropzoneProducts, config);
+        } else if(suppliers[supplier].type === "xls") {
+            XlsParse(file, processDropzoneProducts, config);
         }
     }
 
