@@ -257,7 +257,7 @@
                         for (const tr of tbody.getElementsByClassName('dataRow lineRow')) {
                             for (const costTd of tr.getElementsByClassName('costTd')) {
                                 for (const costColumn of costTd.getElementsByClassName('costColumn')) {
-                                    let cost = parseFloat(costColumn.innerText.replace(/[^0-9.]/g, ''))
+                                    let cost = parseCurrencyDecimal(costColumn.innerText)
                                     if (!isNaN(cost)) {
                                         totalCosts.push(cost)
                                     }
@@ -306,7 +306,11 @@
                             let quantity = NaN, price = NaN;
                             if ('quantity' in breakPrice && 'price' in breakPrice) {
                                 quantity = parseFloat(breakPrice.quantity);
-                                price = parseFloat(breakPrice.price);
+                                if (typeof price == 'string') {
+                                    price = parseCurrencyDecimal(breakPrice.price);
+                                } else {
+                                    price = parseFloat(breakPrice.price)
+                                }
                             }
                             if (!isNaN(quantity) && !isNaN(price)) {
                                 breakPrices[quantity] = price;
@@ -361,6 +365,25 @@
         };
         reader.readAsText(file);
     }
+
+    function parseCurrencyDecimal(string) {
+        // Remove extraneous characters
+        string = string.replace(/[^0-9.,]/g, '')
+
+        let separators = string.match(/[^0-9]/g)
+        if (separators !== null && separators.length > 0) {
+            let decimalSeparator = separators[separators.length - 1]
+
+            // Remove all other separators
+            string = string.replace(RegExp('[^0-9' + decimalSeparator + ']', 'g'), '')
+
+            // Format with decimal point
+            if (decimalSeparator !== '.') {
+                string = string.replace(/[^0-9]/g, '.')
+            }
+        }
+        return parseFloat(string);
+    }
     
     function findData(data, callback) {
         const translations = {
@@ -414,21 +437,7 @@
                 break;
             }
 
-            // Remove extraneous characters
-            let priceString = line[headerMap.Price].replace(/[^0-9.,]/g, '')
-
-            let separators = priceString.match(/[^0-9]/g)
-            if (separators !== null && separators.length > 0) {
-                let decimalSeparator = separators[separators.length - 1]
-                // Remove all other separators
-                priceString = priceString.replace(RegExp('[^0-9' + decimalSeparator + ']', 'g'), '')
-                // Format with decimal point
-                if (decimalSeparator !== '.') {
-                    priceString = priceString.replace(/[^0-9]/g, '.')
-                }
-            }
-            let price = parseFloat(priceString);
-
+            let price = parseCurrencyDecimal(line[headerMap.Price]);
             let quantity = parseFloat(line[headerMap.Quantity].replaceAll(',', ''));
 
             if(line[headerMap.Description] === "" || isNaN(quantity) || isNaN(price)) {
