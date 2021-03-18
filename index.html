@@ -223,8 +223,11 @@
                 rsJs += script.text + "\n"
             }
 
-            let pageData;
-            let parsed = esprima.parseScript(rsJs, { tolerant: true })
+            let pageData, parsed = null;
+            try {
+                parsed = esprima.parseScript(rsJs, {tolerant: true})
+            } catch {}
+
             if (parsed !== null && 'body' in parsed) {
                 for (const bodyKey of parsed.body) {
                     if (bodyKey.type === "VariableDeclaration" && 'declarations' in bodyKey) {
@@ -246,20 +249,26 @@
                 return;
             }
 
-            let shoppingBasketForm = parser.getElementById('shoppingBasketForm:WebBasketLineWidgetActionVALIDATION_ERROR_EVENT')
             let totalCosts = []
-            for (const table of shoppingBasketForm.getElementsByClassName('cartTable')) {
-                for (const tbody of table.getElementsByTagName('tbody')) {
-                    for (const tr of tbody.getElementsByClassName('dataRow lineRow')) {
-                        for (const costTd of tr.getElementsByClassName('costTd')) {
-                            for (const costColumn of costTd.getElementsByClassName('costColumn')) {
-                                let cost = parseFloat(costColumn.innerText.replace(/[^0-9.]/g, ''))
-                                if (!isNaN(cost)) {
-                                    totalCosts.push(cost)
+            try {
+                let shoppingBasketForm = parser.getElementById('shoppingBasketForm:WebBasketLineWidgetActionVALIDATION_ERROR_EVENT')
+                for (const table of shoppingBasketForm.getElementsByClassName('cartTable')) {
+                    for (const tbody of table.getElementsByTagName('tbody')) {
+                        for (const tr of tbody.getElementsByClassName('dataRow lineRow')) {
+                            for (const costTd of tr.getElementsByClassName('costTd')) {
+                                for (const costColumn of costTd.getElementsByClassName('costColumn')) {
+                                    let cost = parseFloat(costColumn.innerText.replace(/[^0-9.]/g, ''))
+                                    if (!isNaN(cost)) {
+                                        totalCosts.push(cost)
+                                    }
                                 }
                             }
                         }
                     }
+                }
+            } catch (error) {
+                if (!(error instanceof TypeError)) {
+                    throw error;
                 }
             }
 
