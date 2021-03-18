@@ -388,8 +388,8 @@
                 row.push(project);
                 row.push("");
                 row.push("");
-                row.push(product.quantity.toString())
-                row.push(product.price.toString())
+                row.push(product.quantity.toFixed(4))
+                row.push(product.price.toFixed(5))
 
                 // SyteLine only allows 60 characters as a field length
                 row = row.map(value => value.substring(0, 60))
