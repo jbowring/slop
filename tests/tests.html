@@ -100,6 +100,7 @@
             supplier: suppliers.avnet,
             quantity: 5250,
             cost: 13161.70,
+            decimalPlaces: 4,
         }, {
             file: 'avnet.csv',
             supplier: suppliers.avnet,
@@ -159,24 +160,31 @@
             file: 'RS checkout complete.html',
             supplier: suppliers.rs,
             error: true,
-        },  {
+        }, {
             file: 'RS checkout HTML only.html',
             supplier: suppliers.rs,
             error: true,
-        },  {
+        }, {
             file: 'RS complete.html',
             supplier: suppliers.rs,
             quantity: 10063,
             cost: 1388.10,
-        },  {
+        }, {
             file: 'RS HTML only.html',
             supplier: suppliers.rs,
             quantity: 10063,
             cost: 1388.10,
-        },  {
+        }, {
             file: 'RS single file.mhtml',
             supplier: suppliers.rs,
             error: true,
+        }, {
+            file: 'RS HTML no cartTable.html',
+            supplier: suppliers.rs,
+            quantity: 10063,
+            cost: 1388.10,
+            warning: true,
+            decimalPlaces: 3,
         },
     ]
 
@@ -224,9 +232,18 @@
             let testCost = test.cost || 0;
             let costDelta = testCost - cost;
 
+            // Allow test to override accuracy
+            let decimalPlaces = null;
+            if('decimalPlaces' in test) {
+                decimalPlaces = test.decimalPlaces;
+            } else if('decimalPlaces' in test.supplier) {
+                decimalPlaces = test.supplier.decimalPlaces;
+            }
+
+            // Check if price is accurate to provided decimal places
             let costEqual;
-            if (testQuantity > 0 && 'decimalPlaces' in test.supplier) {
-                costEqual = (Math.abs(costDelta) / quantity) < Math.pow(10, 0 - test.supplier.decimalPlaces);
+            if (testQuantity > 0 && decimalPlaces !== null) {
+                costEqual = (Math.abs(costDelta) / quantity) < Math.pow(10, 0 - decimalPlaces);
             } else {
                 costEqual = cost === testCost;
             }
