@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Slop Tests</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+    <link rel="manifest" href="../site.webmanifest">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <!-- PapaParse -->
+    <script src="../papaparse/papaparse.min.js"></script>
+
+    <!-- SheetJS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+
+    <!-- Esprima -->
+    <script src="https://unpkg.com/esprima@~4.0/dist/esprima.js"></script>
+
+    <!-- Escodegen -->
+    <script src="https://estools.github.io/escodegen/escodegen.browser.js"></script>
+
+    <script src="../parsing.js"></script>
+    <script src="../suppliers.js"></script>
+
+    <style>
+        body {
+            font-family: Roboto, "Open Sans", sans-serif;
+            font-weight: 300;
+            text-rendering: optimizeLegibility;
+        }
+
+        /*noinspection CssUnusedSymbol*/
+        .btn-supp {
+            margin: 5px;
+        }
+
+        html {
+            position: relative;
+            min-height: 100%;
+        }
+        body {
+            margin-bottom: 80px; /* Margin bottom by footer height */
+        }
+
+        footer {
+            position: absolute;
+            bottom: 0;
+            /*width: 100%;*/
+            /*width: calc(100% - 84px);*/
+            /*height: 80px;*/
+            height: 40px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Tests</h1>
+    <hr>
+
+    <div class="alert alert-success" id="test-success" hidden></div>
+    <div class="alert alert-warning" id="test-warning" hidden></div>
+    <div class="alert alert-danger" id="test-error" hidden></div>
+
+    <table class="table">
+        <thead>
+        <tr>
+<!--            <th scope="col">#</th>-->
+            <th scope="col">File</th>
+            <th scope="col">Pass</th>
+            <th scope="col">Products</th>
+            <th scope="col">Total</th>
+            <th scope="col">Warning</th>
+            <th scope="col">Errors</th>
+        </tr>
+        </thead>
+        <tbody id="tests-tbody"></tbody>
+    </table>
+
+
+</div>
+
+<script>
+    const tests = [
+        {
+            file: 'avnet EUR.csv',
+            supplier: suppliers.avnet,
+            quantity: 5250,
+            cost: 13161.70,
+        }, {
+            file: 'avnet.csv',
+            supplier: suppliers.avnet,
+            quantity: 5000,
+            cost: 394.90,
+        }, {
+            file: 'digikey.csv',
+            supplier: suppliers.digikey,
+            quantity: 5002,
+            cost: 2117.23,
+        }, {
+            file: 'digikey (headers incorrect).csv',
+            supplier: suppliers.digikey,
+            error: true,
+        }, {
+            file: 'digikey (unparsable row).csv',
+            supplier: suppliers.digikey,
+            quantity: 1,
+            cost: 0.87,
+            warning: true,
+        }, {
+            file: 'digikey backorder.csv',
+            supplier: suppliers.digikey,
+            quantity: 6000,
+            cost: 4246.09,
+        }, {
+            file: 'digikey EUR.csv',
+            supplier: suppliers.digikey,
+            quantity: 10000,
+            cost: 18.49,
+        }, {
+            file: 'digikey previous basket.csv',
+            supplier: suppliers.digikey,
+            quantity: 20,
+            cost: 71.94,
+        }, {
+            file: 'farnell EUR.csv',
+            supplier: suppliers.farnell,
+            quantity: 1004,
+            cost: 1136.56,
+        }, {
+            file: 'farnell.csv',
+            supplier: suppliers.farnell,
+            quantity: 13,
+            cost: 7.82,
+        }, {
+            file: 'mouser EUR.xls',
+            supplier: suppliers.mouser,
+            quantity: 1001,
+            cost: 517.03,
+        }, {
+            file: 'mouser.xls',
+            supplier: suppliers.mouser,
+            quantity: 1001,
+            cost: 465.43,
+        }, {
+            file: 'rs.js',
+            supplier: suppliers.rs,
+            error: true,
+        },  {
+            file: 'RS checkout complete.html',
+            supplier: suppliers.rs,
+            error: true,
+        },  {
+            file: 'RS checkout HTML only.html',
+            supplier: suppliers.rs,
+            error: true,
+        },  {
+            file: 'RS complete.html',
+            supplier: suppliers.rs,
+            quantity: 10063,
+            cost: 1388.10,
+        },  {
+            file: 'RS ensighten.js',
+            supplier: suppliers.rs,
+            error: true,
+        },  {
+            file: 'RS HTML only.html',
+            supplier: suppliers.rs,
+            quantity: 10063,
+            cost: 1388.10,
+        },  {
+            file: 'RS pageData.json',
+            supplier: suppliers.rs,
+            error: true,
+        },  {
+            file: 'RS single file.mhtml',
+            supplier: suppliers.rs,
+            error: true,
+        },
+    ]
+
+    let results = {};
+    
+    function addRow(cells) {
+        const keys = ['file', 'pass', 'products', 'total', 'warning', 'errors'];
+        const table = document.getElementById('tests-tbody');
+
+        let row = '<tr>\n';
+        for (const key of keys) {
+            row += '<td>';
+            if (key in cells) {
+                row += cells[key];
+            }
+            row += '</td>\n';
+        }
+        row += '</tr>\n';
+
+        table.innerHTML += row;
+    }
+
+    for (const test of tests) {
+        results[test.file] = null;
+    }
+
+    for (const test of tests) {
+        let request = new XMLHttpRequest();
+        request.open('GET', test.file, true);
+
+        let errorHandler = function () {
+            console.log('error thrown')
+        }
+
+        let callback = function (products, errors, showWarning = false) {
+            let quantity = 0, cost = 0;
+            products.forEach(product => {
+                quantity += product.quantity;
+                cost += product.price * product.quantity;
+            });
+
+            cost = Math.trunc(cost * 100) / 100
+
+            let testQuantity = test.quantity || 0;
+            let testCost = test.cost || 0;
+            let costDelta = testCost - cost;
+
+            let costEqual;
+            if (testQuantity > 0 && 'decimalPlaces' in test.supplier) {
+                costEqual = (Math.abs(costDelta) / quantity) < Math.pow(10, 0 - test.supplier.decimalPlaces);
+            } else {
+                costEqual = cost === testCost;
+            }
+
+            let pass = true;
+            pass = pass ? quantity === testQuantity : pass;
+            pass = pass ? costEqual : pass;
+            pass = pass ? (errors.length > 0) === (test.error || false) : pass;
+            pass = pass ? showWarning === (test.warning || false) : pass;
+
+            let total = cost.toFixed(2);
+
+            if (Math.abs(costDelta) >= 0.01) {
+                total += ' <span style="color: red">(';
+                if(costDelta > 0) {
+                    total += '+'
+                }
+                total += costDelta.toFixed(2);
+                total += ')</span>';
+            }
+
+            addRow({
+                file: test.file,
+                pass: pass ? '&#x2714;' : '&#x274C;',
+                products: quantity,
+                total: total,
+                warning: showWarning ? 'Yes' : 'No',
+                errors: errors.length,
+            })
+
+            results[test.file] = pass;
+            if(Object.keys(results).every(file => typeof results[file] === 'boolean')) {
+                let passes = Object.values(results).reduce((n, result) => n + (result ? 1 : 0));
+                let successMessage = document.getElementById('test-success');
+                successMessage.innerText = passes + ' tests passed';
+                successMessage.hidden = passes === 0;
+
+                let failures = Object.keys(results).length - passes;
+                let errorMessage = document.getElementById('test-error');
+                errorMessage.innerText = failures + ' tests failed';
+                errorMessage.hidden = failures === 0;
+            }
+        }
+
+        request.onload = function() {
+            if (this.status >= 200 && this.status < 400) {
+                if(test.supplier.type === 'csv') {
+                    let file = new File([this.response], test.file, {type: 'text/csv'});
+                    CsvParse(file, callback, test.supplier.config || {})
+                } else if(test.supplier.type === 'xls') {
+                    let file = new File([this.response], test.file, {type: 'application/vnd.ms-excel'});
+                    XlsParse(file, callback, test.supplier.config || {})
+                } else if(test.supplier.type === 'rs') {
+                    let file = new File([this.response], test.file, {type: 'text/html'});
+                    RsParse(file, callback, test.supplier.config || {})
+                }
+            } else {
+                errorHandler();
+            }
+        };
+
+        request.onerror = errorHandler;
+        if(test.supplier.type === 'xls') {
+            request.responseType = 'arraybuffer';
+        }
+        request.send();
+    }
+</script>
+
+</body>
+</html>
