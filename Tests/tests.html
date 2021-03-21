@@ -93,6 +93,7 @@
 </div>
 
 <script>
+    const testFileDir = 'Test Files/'
     const tests = [
         {
             file: 'avnet EUR.csv',
@@ -216,7 +217,7 @@
 
     for (const test of tests) {
         let request = new XMLHttpRequest();
-        request.open('GET', test.file, true);
+        request.open('GET', testFileDir + test.file, true);
 
         let errorHandler = function () {
             console.log('error thrown')
