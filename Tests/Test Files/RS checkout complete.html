@@ -1,0 +1,989 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0055)https://uk.rs-online.com/web/co/orderreview/?cid=293890 -->
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<!-- Richfaces JS and CSS Files --><iframe src="javascript:void(0)" title="" style="width: 0px; height: 0px; border: 0px; display: none;" src="./RS checkout complete_files/saved_resource.html"></iframe><script type="text/javascript" src="./RS checkout complete_files/jquery.js.download"></script><script type="text/javascript" src="./RS checkout complete_files/jquery-ui.min.js.download"></script>
+	
+	<link rel="shortcut icon" type="image/ico" href="https://uk.rs-online.com/rs.ico">
+
+		<!-- WebApp version : 2.50.36 -->
+    	<!-- Build Date   : 03042021_060234.044 -->
+	
+	<meta http-equiv="expires" content="0">
+	<meta http-equiv="cache-control" content="no-cache, no-store">
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+	
+	<link rel="stylesheet" href="./RS checkout complete_files/ncj.css" type="text/css">	
+	<script src="./RS checkout complete_files/ncjScripts.js.download" language="JavaScript"></script>
+	<script>	
+	//<![CDATA[
+	var pageData = {"basketProducts":"TEST, TEST1",
+        			"basketBreakPrices":[],
+			        "deliveryType":"delivery/collection",
+			        "isCreditAccount":"Y",
+                    "store":"uk","ebSessionId":"","ecSystemId":"WEB","customerType":"2","jobRole":"12","userId":"18544023","registrationDate":"08\/10\/2020 16:01","stockedOrderRef":"","nonStockedOrderRef":"","basketSize":"","currencyCode":"","grandTotalWithTax":"","tax":"","shipping":"","mediaCode":"","site_hub":"","site_currency":"","search_keyword":"","search_results":"","search_categories":"","search_super_sections":"","search_response_action":"","page_name":"","page_type":"order review express","page_node":"","product_node_id":"","product_page_id":"","product_page_category":"","product_page_price":"","product_page_stock_level":"","product_page_lead_time":"", "date_format":"", "customer_sold_to":"4416574","customer_ship_to":"","customer_type":"2","customer_contact_id":"77904538","order_total_revenue":"","order_delivery_type":"","order_payment_type":"","order_discount_amount":"","order_id_pm":"","order_checkout":"","order_basket":"",
+    "products":[],"search_search_type":"","search_browse":"","search_cascade_order":"","search_pattern_matched":"","search_spell_correct_applied":"","search_wild_carding_mode":"","search_match_mode":"","search_interface_name":"","search_language_used":"","search_keyword_spell_corrected":"","search_st_normalised":"","search_pattern_order":"","search_keyword_app":"","search_config":"","site_section":"","site_section2":"","site_section3":"","site_type":"","supplier_brand":"",
+        "page_hierarchy":"",
+        "search_alternative_offered":"","orderConversion":0,
+    "product_page_desc":"","product_page_thumbnail_img":""};
+    
+	var shoppingBasket = {};
+    var rs = rs || {shoppingBasket: shoppingBasket};
+
+    rs.web = {
+
+        digitalData: pageData,
+        addEvent: function(evtKey, evtData) {
+            rs.web.digitalData.events = rs.web.digitalData.events || [];
+            rs.web.digitalData.events[rs.web.digitalData.events.length] = {
+                eventKey : evtKey,
+                eventData : evtData,
+                eventTimestamp : new Date().toUTCString()
+            };
+
+            
+			if (typeof Bootstrapper !== "undefined" && Bootstrapper.ensEvent !== "undefined" ){
+				Bootstrapper.ensEvent.trigger("customPageDataEvent");
+            }
+            
+        },
+        addToCartDatablockEvent: function(productId, price, quantity, pageName) {
+            var compareSelectedPageName = "compareSelectedViewPage";
+            var terminalNodePageName = "TerminalnodePage";
+            var searchResultsPageName = "SearchResultsPage";
+            var cartActionType = null;
+
+            if (pageName && (productId && price && quantity)) {
+                if (pageName.toUpperCase() === compareSelectedPageName.toUpperCase()){
+                    cartActionType = "compare";
+                } else if (pageName.toUpperCase() === terminalNodePageName.toUpperCase()){
+                    cartActionType = "tn";
+                } else if (pageName.toUpperCase() === searchResultsPageName.toUpperCase()){
+                    cartActionType = "search";
+                }
+
+                if (cartActionType) {
+                    var eventData = {
+                        products: [{
+                            productId: productId,
+                            orderQuantity: quantity,
+                            price: price,
+                            cart_action_type: cartActionType
+                        }]
+                    };
+                    rs.web.addEvent('addToCartDataBlockEvent',eventData);
+                }
+            }
+        },
+        addCollectionListPickEvent: function(rslocalid) {
+            
+			if (rslocalid) {
+				var eventData = {
+						 "collectionChoiceId": rslocalid
+				};
+				rs.web.addEvent('collectionListPick',eventData);
+			}
+        },
+        basketLineRemovedEvent: function(articleId, qty) {
+            
+			if (articleId) {
+				var eventData = {
+						 "articleId": articleId,
+						 "quantity": qty
+				};
+				rs.web.addEvent('basketLineRemoved',eventData);
+			}
+        },
+        loginOrContinueAsGuestEvent: function() {
+            
+            rs.web.addEvent('loginOrContinueAsGuestEvent');
+        },
+        punchoutReturned: function() {
+            rs.web.addEvent('basket.returnRequisition');
+        },
+        collectionListPickEvent: function(collectionChoiceId) {
+            
+			if (collectionChoiceId) {
+				var eventData = {
+						 "collectionChoiceId": collectionChoiceId
+				};
+				rs.web.addEvent('collectionListPick',eventData);
+			}
+        },
+        deliveryOptionSelectedEvent: function(deliverySelectedId) {
+            
+			if (deliverySelectedId) {
+				var eventData = {
+						 "deliverySelectedId": deliverySelectedId
+				};
+				rs.web.addEvent('deliveryOptionSelected',eventData);
+			}
+        },
+        basketRememberMeSelectedEvent: function(isSelected) {
+            
+        	if (isSelected)
+				rs.web.addEvent('basketRememberMeSelected');
+        	else
+        		rs.web.addEvent('basketRememberMeDeselected');
+        }
+    };
+    //]]>
+	</script><!-- Begin Ensighten tag. --> <script type="text/javascript" src="./RS checkout complete_files/Bootstrap.js.download"></script> <!-- End Ensighten tag. -->
+		<script>
+		//<![CDATA[
+jQuery(document).ready(function() {
+		JSFAjaxViewStateHelper.attachToJSFAjaxSuccessEvent();
+});
+		//]]>		
+		</script><script type="text/javascript" src="./RS checkout complete_files/jsf.js.download"></script><script type="text/javascript" src="./RS checkout complete_files/packed.js.download"></script><link type="text/css" rel="stylesheet" href="./RS checkout complete_files/packed.css">
+                          <script>!function(a){var e="https://s.go-mpulse.net/boomerang/",t="addEventListener";if("False"=="True")a.BOOMR_config=a.BOOMR_config||{},a.BOOMR_config.PageParams=a.BOOMR_config.PageParams||{},a.BOOMR_config.PageParams.pci=!0,e="https://s2.go-mpulse.net/boomerang/";if(window.BOOMR_API_key="3BX8K-35WY6-3F5UV-JX8Z7-DCJ3E",function(){function n(e){a.BOOMR_onload=e&&e.timeStamp||(new Date).getTime()}if(!a.BOOMR||!a.BOOMR.version&&!a.BOOMR.snippetExecuted){a.BOOMR=a.BOOMR||{},a.BOOMR.snippetExecuted=!0;var i,_,o,r=document.createElement("iframe");if(a[t])a[t]("load",n,!1);else if(a.attachEvent)a.attachEvent("onload",n);r.src="javascript:void(0)",r.title="",r.role="presentation",(r.frameElement||r).style.cssText="width:0;height:0;border:0;display:none;",o=document.getElementsByTagName("script")[0],o.parentNode.insertBefore(r,o);try{_=r.contentWindow.document}catch(O){i=document.domain,r.src="javascript:var d=document.open();d.domain='"+i+"';void(0);",_=r.contentWindow.document}_.open()._l=function(){var a=this.createElement("script");if(i)this.domain=i;a.id="boomr-if-as",a.src=e+"3BX8K-35WY6-3F5UV-JX8Z7-DCJ3E",BOOMR_lstart=(new Date).getTime(),this.body.appendChild(a)},_.write("<bo"+'dy onload="document._l();">'),_.close()}}(),"".length>0)if(a&&"performance"in a&&a.performance&&"function"==typeof a.performance.setResourceTimingBufferSize)a.performance.setResourceTimingBufferSize();!function(){if(BOOMR=a.BOOMR||{},BOOMR.plugins=BOOMR.plugins||{},!BOOMR.plugins.AK){var e=""=="true"?1:0,t="",n="kin3i6ixyodkgycpvu6a-f-c43416586-clientnsv4-s.akamaihd.net",i={"ak.v":"30","ak.cp":"425222","ak.ai":parseInt("273239",10),"ak.ol":"0","ak.cr":41,"ak.ipv":4,"ak.proto":"h2","ak.rid":"b4c03ee","ak.r":22005,"ak.a2":e,"ak.m":"a","ak.n":"essl","ak.bpcip":"82.27.180.0","ak.cport":60555,"ak.gh":"173.222.210.173","ak.quicv":"","ak.tlsv":"tls1.3","ak.0rtt":"","ak.csrc":"-","ak.acc":"","ak.t":"1615834428","ak.ak":"hOBiQwZUYzCg5VSAfCLimQ==RyIkCSIIFV7u5T35Y+fo30wEFAZqYO47b+wxXhkctuKWGrdAoUmggA3W/35HXVfs7MZ4nrCgIoiVCqkVpOzu7W87BhXzix4WYzwmkhP9MhiUGnhfxg6BvWoN7uClAK/c0JlrdSWyuXD7Kp3ZfOmovsHfSpyJmwLV3pmhHrDUYdfhoP9w2g9RMriQS1ng1z/R+TdYLhkigJ+rfRZcilTLHS2j/8rMdjlfI+9YMEx9Q4EDy6C2NVdOkTtOly6gHSe8/Drw5tXHv9cY6EPAaEnE36b7HLxaah0aKPCTLkrEQM2sCuRrm4Tm1Ke0207lhoUXK1Ooem3ZhpB/mmKlKDRMwEv2X0Jtpw6cm594XP+HXxipuynvj4FIBrny31TiEMMM9FD+r7lvbsobYlGps9kPNbYf07dTMnATvTDjsYeP5PI=","ak.pv":"141","ak.dpoabenc":""};if(""!==t)i["ak.ruds"]=t;var _={i:!1,av:function(e){var t="http.initiator";if(e&&(!e[t]||"spa_hard"===e[t]))i["ak.feo"]=void 0!==a.aFeoApplied?1:0,BOOMR.addVar(i)},rv:function(){var a=["ak.bpcip","ak.cport","ak.cr","ak.csrc","ak.gh","ak.ipv","ak.m","ak.n","ak.ol","ak.proto","ak.quicv","ak.tlsv","ak.0rtt","ak.r","ak.acc","ak.t"];BOOMR.removeVar(a)}};BOOMR.plugins.AK={akVars:i,akDNSPreFetchDomain:n,init:function(){if(!_.i){var a=BOOMR.subscribe;a("before_beacon",_.av,null,null),a("onbeacon",_.rv,null,null),_.i=!0}return this},is_complete:function(){return!0}}}}()}(window);</script></head><body>
+	<!-- Google Tag Manager script and DataLayer --><a name="home"></a>			
+        	<div class="outerwrapper" id="wrapper">
+	<div class="headerDiv"><!--headerDiv Start-->
+		<div class="logoDiv"><!--header RS logoDiv Start-->
+							<a class="headerLogo" href="https://uk.rs-online.com/web/"><img src="./RS checkout complete_files/logo.gif" alt="">
+							</a>
+					<a target="_blank" class="progressActive secureCheckoutHeaderSpan" href="https://sealinfo.thawte.com/thawtesplash?form_file=fdf/thawtesplash.fdf&amp;dn=*.RS-ONLINE.COM&amp;lang=en"><span class="checkoutHeader">Secure checkout</span>
+					</a>	
+			
+		</div><!--header RS logoDiv End-->
+				<div class="headerSecurityLogoDiv"><!--header SecurityLogoDiv Start-->
+						<a target="_blank" href="https://sealinfo.thawte.com/thawtesplash?form_file=fdf/thawtesplash.fdf&amp;dn=*.RS-ONLINE.COM&amp;lang=en"><img src="./RS checkout complete_files/headerSecurityLogo.gif" alt="">
+						</a></div><!--header SecurityLogoDiv End-->
+		<div class="progressBarDiv C65">	
+		<!-- Delivery Link Start--><div id="j_idt106" class="progressStepDiv progressComplete">
+						<a href="https://uk.rs-online.com/web/co/delivery/?cid=293890"><span class="progressNumber pageTitle">1</span><span class="progressComplete progressText">Delivery address</span>
+						</a></div>	
+		<!-- Delivery Link End-->
+
+		<!-- Collection Link Start-->	
+		
+		<!-- Collection Link End-->
+		
+		<!-- Payment Link Start--><div id="j_idt113" class="progressStepDiv progressComplete">
+					<a href="https://uk.rs-online.com/web/co/payment/?cid=293890"><span class="progressNumber pageTitle">2</span><span class="progressComplete progressText">Payment</span>
+					</a></div>	
+		<!-- Payment Link End-->
+		
+		<!-- Approval Link Start-->	
+		<!-- Approval Link End-->
+		
+		<!-- Review Link Start--><div id="j_idt120" class="progressStepDiv progressActive"><span class="progressNumber pageTitle">3</span><span class="progressActive progressText">Review</span></div>	
+		<!-- Review Link End-->
+		
+		<!-- Third Party Payment Start-->	
+		<!-- Third Party Payment End-->
+		
+		</div>
+		</div><!--headerDiv End-->
+				<div id="mainContent" class="mainContent">
+<form id="widgetErrRptForm" name="widgetErrRptForm" method="post" action="https://uk.rs-online.com/web/co/orderreview/?cid=293890" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="widgetErrRptForm" value="widgetErrRptForm">
+<div id="widgetErrRptForm:exceptionPanel" style="visibility: hidden;"><div class="rf-pp-shade" id="widgetErrRptForm:exceptionPanel_shade" style="z-index:100;"><button class="rf-pp-btn" id="widgetErrRptForm:exceptionPanelFirstHref" name="widgetErrRptForm:exceptionPanelfirstHref"></button></div><div class="rf-pp-cntr redModalPanel" id="widgetErrRptForm:exceptionPanel_container" style="position: fixed; z-index:100; "><div class="rf-pp-shdw" id="widgetErrRptForm:exceptionPanel_shadow" style="opacity: 0.1;"></div><div class="rf-pp-hdr " id="widgetErrRptForm:exceptionPanel_header" style="cursor: move;"><div class="rf-pp-hdr-cnt" id="widgetErrRptForm:exceptionPanel_header_content">Exception Details</div></div><div class="rf-pp-hdr-cntrls " id="widgetErrRptForm:exceptionPanel_header_controls">
+				    <div class="closeIcn margin5" id="exceptionhidelink" title="Close" onclick="RichFaces.component(&#39;widgetErrRptForm:exceptionPanel&#39;).hide()"></div></div><div class="rf-pp-cnt-scrlr" id="widgetErrRptForm:exceptionPanel_content_scroller"><div class="rf-pp-cnt" id="widgetErrRptForm:exceptionPanel_content">
+			<div class="showErrorDetailsDiv" style="width:575px;height:435px;overflow:auto;">	
+				
+			</div></div></div></div><script type="text/javascript">new RichFaces.ui.PopupPanel("widgetErrRptForm:exceptionPanel",{"autosized":true,"height":200,"minHeight":200,"minWidth":450,"width":500} );</script></div><div id="widgetErrRptForm:errorPanel" style="visibility: hidden;"><div class="rf-pp-shade" id="widgetErrRptForm:errorPanel_shade" style="z-index:100;"><button class="rf-pp-btn" id="widgetErrRptForm:errorPanelFirstHref" name="widgetErrRptForm:errorPanelfirstHref"></button></div><div class="rf-pp-cntr redModalPanel" id="widgetErrRptForm:errorPanel_container" style="position: fixed; z-index:100; "><div class="rf-pp-shdw" id="widgetErrRptForm:errorPanel_shadow" style="opacity: 0.1;"></div><div class="rf-pp-hdr " id="widgetErrRptForm:errorPanel_header" style="cursor: move;"><div class="rf-pp-hdr-cnt" id="widgetErrRptForm:errorPanel_header_content">Error Details</div></div><div class="rf-pp-hdr-cntrls " id="widgetErrRptForm:errorPanel_header_controls">
+				    <div class="closeIcn margin5" id="errorhidelink" title="Close" onclick="RichFaces.component(&#39;widgetErrRptForm:errorPanel&#39;).hide()"></div></div><div class="rf-pp-cnt-scrlr" id="widgetErrRptForm:errorPanel_content_scroller"><div class="rf-pp-cnt" id="widgetErrRptForm:errorPanel_content">
+			<div class="reportErrorDiv">
+				<strong>The error has been submitted.</strong> <br> . <br>  <strong></strong>
+			</div></div></div></div><script type="text/javascript">new RichFaces.ui.PopupPanel("widgetErrRptForm:errorPanel",{"autosized":true,"width":450} );</script></div><input type="hidden" name="javax.faces.ViewState" id="javax.faces.ViewState" value="-24657714347356864:-6172927469977627172" autocomplete="off">
+</form>
+<form id="expressCheckoutOrderReviewForm" name="expressCheckoutOrderReviewForm" method="post" action="https://uk.rs-online.com/web/co/orderreview/?cid=293890" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="expressCheckoutOrderReviewForm" value="expressCheckoutOrderReviewForm">
+
+
+		<script type="text/javascript">
+		var jSONObject = {"CoreDisplayBasketWidgetAction":{"description":{"validation":true},"bhnIcon":{"validation":true},"productImage":{"validation":true},"stockImage":{"validation":true}},"CheckoutHeaderWidgetAction":{"companyLogo":{"validation":true},"headerSecurityLogo":{"validation":true},"securityPadLockLogo":{"validation":true}},"CheckoutFooterWidgetAction":{"footerLogoImagePath":{"validation":true},"paymentOptionsImagePath":{"validation":true},"securityLogoImagePath":{"validation":true}},"GenericPageLabelWidgetAction":[{"pageLabel":{"validation":true}},{"pageLabel":{"validation":true}}],"ProgressBarWidgetAction":{},"SystemErrorWidgetAction":{},"HeaderErrorWidgetAction":{},"RSContactDetailsWidgetAction":{"helpContactImagePath":{"validation":true}},"DeliveryOptionSelectedDisplayWidgetAction":{},"DeliveryPlaceholderWidgetAction":{},"DeliveryListAddressWidgetAction":{"selectedAddressId":{"mandatory":true,"validation":true,"mandatoryError":"Please enter details"}},"DeliveryTypePlaceholderWidgetAction":{},"PaymentPlaceholderWidgetAction":{},"CustomerContactDetailsDisplayWidgetAction":{},"DisplayAddressWidgetAction":{},"DisplayPaymentWidgetAction":[{"changePaymentLink":{"validation":true}},{"changePaymentLink":{"validation":true}}],"CustomerAccountDisplayWidgetAction":{},"DisplayInvoiceAddressWidgetAction":{},"StockedProductLabelDisplayWidgetAction":{},"StockedProductReviewYouSaveWidgetAction":{},"CoreProductsOrderTotalDetailsWidgetAction":{"helpImage":{"validation":true}},"ReviewPageOrderTotalWidgetAction":{},"OrderReviewStockedProductPaginationWidgetAction":{"pageNumberInActive":{"validation":true},"previousPage":{"validation":true},"firstPage":{"validation":true},"lastPage":{"validation":true},"nextPage":{"validation":true},"eventKey":{"validation":true},"pageNumberActive":{"validation":true}},"CheckoutNotificationSettingsWidgetAction":{"receiveOrderStatusNotification":{"validation":true}},"CheckoutNavigationWidgetAction":{},"PrintWidgetAction":{},"FAQWidgetAction":{},"FAOContactDetailWidgetAction":{"forAttentionOfName":{"maxLength":60,"validation":true,"maxLengthError":"labelNotFounduk/maxLengthErrorLabelNotDefined"}},"LoggedInUserSelectPaymentWidgetAction":{"costCentre":{"maxLength":20,"validation":true,"maxLengthError":"labelNotFounduk/maxLengthErrorLabelNotDefined"},"tempCvv":{"validation":true}},"LoggedInCostCentreCodesListWidgetAction":{},"DisplayCodesCCLoggedInAction":{},"LoggedInBlanketOrdersListWidgetAction":{},"PurchaseOrderNumberWidgetAction":{"purchaseOrderNumberHelpImagePath":{"validation":true},"purchaseOrderNumber":{"maxLength":35,"validation":true,"maxLengthError":"labelNotFounduk/maxLengthErrorLabelNotDefined"}},"OrderReviewSetDefaultsWidgetAction":{"enableDefaults":{"validation":true},"enableSettingDefaults":{"validation":true}},"EditUserPaymentWidgetAction":{"cardName":{"mandatory":true,"validation":true,"mandatoryError":"Please enter a valid card name"},"expiryDate":{"mandatory":true,"validation":true,"mandatoryError":"Please enter a valid date"},"cardHolder":{"mandatory":true,"validation":true,"mandatoryError":"Please enter the card holder's name"},"cardNumber":{"mandatory":true,"validation":true,"mandatoryError":"Please enter a valid card number"}},"BackToTopWidgetAction":{},"DisplayOrderNumberWidgetAction":{},"EnsightenTagWidgetAction":{}};
+		</script>
+		<div class="exReviewContainer">
+				<div class="systemErrorWidgetContainer top10 COM26">
+				</div>
+				<div class="headerErrorWidgetContainer COM21"><div id="expressCheckoutOrderReviewForm:HeaderErrorWidgetActionPAGE_REFRESH_EVENT"></div>
+				</div>
+			<div class="clearBoth"></div>
+			<div class="termsandconditionsWrap">
+				<div class="floatRight termsandcondschilddivwidth2 TnCbackground">
+
+	<div class="floatRight termsandcondsmaindivwidth notifDiv">
+		<a name="scrollPageTnC"></a>
+
+		<div class="floatRight termsandcondschilddivwidth2">
+			<div class="floatRight termsandcondschilddivwidth"><span class="text">By placing your order you agree to the </span>
+						<a class="link1" href="javascript:showQuickView(&#39;termsConditionsModalPanel&#39;, {url:&#39;/web/generalDisplay.html?id=aboutRS&amp;file=conditions&#39;})">
+							RS Terms and Conditions of Sale
+						</a>
+			</div>
+		</div>
+	</div>
+				</div>
+				<div class="checkoutNavigationContainer COM73">
+
+		<span class="toggleBtnState"><a href="https://uk.rs-online.com/web/co/orderreview/?cid=293890#" onclick="jsf.util.chain(this,event,&#39;raiseAnalyticsEvent(\&#39;CheckOutReviewPage\&#39;);&#39;,&#39;mojarra.jsfcljs(document.getElementById(\&#39;expressCheckoutOrderReviewForm\&#39;),{\&#39;expressCheckoutOrderReviewForm:j_idt212\&#39;:\&#39;expressCheckoutOrderReviewForm:j_idt212\&#39;},\&#39;\&#39;)&#39;);return false" class="cssButton primary blue enabledBtn">
+						<span id="checkoutSecurelyBtn">Place order</span></a>
+			<a class="hide cssButton primary inactive disabledBtn" href="javascript:;">
+				<span>Place order</span>
+			</a>
+		</span>
+				</div>
+			</div>
+			<div class="clearBoth"></div>
+				<div class="orderSummaryContainer COM66 COM08">
+		<div class="rsconacdetailsHorizontal floatLeft text">
+		        <div class="needHelp textTitle">Need some help?</div>
+					Call our Customer Services team on:
+		       <span class="manindicator">
+					03457 201201
+					
+				</span>
+		 </div>
+				</div>
+			<div class="deliveryHeaderDiv"><span class="layerTitleText top10 floatLeft">Review</span></div>
+			<div class="grayBorderBox">
+			<div class="defaultPrefs">
+					<p>This order is using your saved preferences.</p>
+					<span>You can edit the details below before placing your order</span>
+					<div class="optOutExpressCheckoutDiv top5">
+						<span class="optOutExpressCheckoutLabel"><input id="expressCheckoutOrderReviewForm:optOutExpressCheckoutChkBox" type="checkbox" name="expressCheckoutOrderReviewForm:optOutExpressCheckoutChkBox" checked="checked" onclick="RichFaces.ajax(this,event,{&quot;sourceId&quot;:this,&quot;parameters&quot;:{&quot;javax.faces.behavior.event&quot;:&quot;click&quot;,&quot;org.richfaces.ajax.component&quot;:&quot;expressCheckoutOrderReviewForm:optOutExpressCheckoutChkBox&quot;} } )">
+						</span>
+						<span class="optOutExpressCheckoutValue"><label for="expressCheckoutOrderReviewForm:optOutExpressCheckoutChkBox">Continue using my saved preferences</label>
+						</span>
+					</div>
+			</div>
+			</div>
+			<div class="grayBorderBox">
+				<div class="textTitle orderNumTitleText">Your order number
+				</div>
+					<div class="top10">
+		<div class="purchaseOrderNumberDiv C88 formField"><div id="expressCheckoutOrderReviewForm:PurchaseOrderNumberWidgetAction_purchaseOrderNumber_decorate">
+     <span>
+		<div class="clientSideError" style="display:none;"></div><span class="textTitle formLabel">Your order number</span><div class="formValue">
+					<div class="helpInputDiv"><input placeholder="e.g. Order 1234567" id="expressCheckoutOrderReviewForm:PurchaseOrderNumberWidgetAction_purchaseOrderNumber_decorate:PurchaseOrderNumberWidgetAction_purchaseOrderNumber" type="text" name="expressCheckoutOrderReviewForm:PurchaseOrderNumberWidgetAction_purchaseOrderNumber_decorate:PurchaseOrderNumberWidgetAction_purchaseOrderNumber" class="textInput inputText" maxlength="35" onblur="RichFaces.ajax(this,event,{&quot;sourceId&quot;:this,&quot;parameters&quot;:{&quot;javax.faces.behavior.event&quot;:&quot;blur&quot;,&quot;org.richfaces.ajax.component&quot;:&quot;expressCheckoutOrderReviewForm:PurchaseOrderNumberWidgetAction_purchaseOrderNumber_decorate:PurchaseOrderNumberWidgetAction_purchaseOrderNumber&quot;} } )">
+<div class="helpContainer "><img src="./RS checkout complete_files/formhelp.gif" class="helpIcon" onmouseover="fadeInHelp(this);" onmouseout="hideHelp(this);;">
+	<div class="helpPopupMainDiv helpBalloon" onmouseover="showHelp(this);" onmouseout="hideHelp(this);">	
+		 <div class="helpPopupDiv">
+		 <img src="./RS checkout complete_files/formHelpPointer.gif" class="helpPopupPointer helpBalloon pointerLeft">
+		 <img src="./RS checkout complete_files/formHelpPointerRight.gif" class="helpPopupPointer helpBalloon pointerRight">
+		 <div class="formHelpTitle"><span class="formHelpTitle">What is your order number?</span></div>
+			  <table><tbody><tr><td valign="top"><span class="formHelpText">You can use this field to allocate your own reference number to your order.</span><span class="formHelpText">For example, you could use a sales number or job number - this will allow you to match RS order reference numbers to your own internal order systems.</span>
+			  </td></tr></tbody></table>
+			  <div class="clearBoth"></div>
+	</div>
+	</div>	
+</div>
+					</div>
+					</div>
+    </span></div>
+		</div>
+					</div>
+					<div class="clearBoth"></div>
+			</div>
+			<div class="grayBorderBox">
+				<div class="exRightBox">
+					<div class="textTitle bottom10 floatLeft">
+							Additional Details
+						
+					</div><div id="expressCheckoutOrderReviewForm:FAOContactDetailWidgetAction_faoContactDetailsDiv" class="FAOContactDetailWidgetAction contactDetalis clientValidation">
+				<div class="contactInnerDiv width210">
+					<div class="formField"><div id="expressCheckoutOrderReviewForm:FAOContactDetailWidgetAction_forAttentionOfName_decorate">
+     <span>
+		<div class="clientSideError" style="display:none;"></div><span class="formLabel fieldTitle">Pop in the full name below, so we know who to send the parcel to and leave the rest to the RS team. Thanks!</span><div class="formValue"><input id="expressCheckoutOrderReviewForm:FAOContactDetailWidgetAction_forAttentionOfName_decorate:FAOContactDetailWidgetAction_forAttentionOfName" type="text" name="expressCheckoutOrderReviewForm:FAOContactDetailWidgetAction_forAttentionOfName_decorate:FAOContactDetailWidgetAction_forAttentionOfName" class="forAttentionOfName inputText" maxlength="60" onfocus="clientSideValidation();"></div>
+    </span></div>
+					</div>
+		        </div></div><div class="clearBoth"></div>
+				</div>
+	<div class="CollectionDeliveryContainer right10">
+			<div class="textTitle floatLeft">Delivery</div>
+		<div class="clearBoth"></div>
+      <div class="exLeftBox"><span style="display:none;" id="expressCheckoutOrderReviewForm:poll"><script type="text/javascript">new RichFaces.ui.Poll("expressCheckoutOrderReviewForm:poll",{"interval":2000,"ontimer":function(event){RichFaces.ajax("expressCheckoutOrderReviewForm:poll",event,{"incId":"1"} )}} )</script></span><div id="expressCheckoutOrderReviewForm:customerContactDiv" class="customerContactDetailsContainer">
+		<div class="contactDetailsDisplay">
+		<div class="formField">  
+			<span class="formLabel">Order placer&nbsp;</span>
+		    <div class="formValue nonSelected">Mr.&nbsp;
+			JOEL&nbsp;
+		    BOWRING&nbsp;
+		    </div>
+		    </div>	
+		    <div class="formField"><span class="formLabel">Contact email</span>
+			 <div class="formValue nonSelected">joel.bowring@ttp.com</div>   
+		    </div>
+		    <div class="formField"><span class="formLabel">Contact telephone number</span>
+			 <div class="formValue nonSelected">01763 262626</div>
+		    </div>
+		    </div></div>   
+	    <div class="displayaddressDiv displayaddressVertical COM15 formField">
+	            <div class="formLabel">Delivery address</div>
+	       <div class="formValue">
+	            TTP PLC,<br>
+	           MELBOURN SCIENCE PARK,<br>
+	            CAMBRIDGE ROAD,<br>
+	            MELBOURN,<br>
+	            ROYSTON,<br>
+	            HERTFORDSHIRE,<br>
+	            SG8 6EE,<br>
+	            UK
+	      
+		</div>
+	 </div><input id="expressCheckoutOrderReviewForm:deliveryDetailsChangeButton" name="expressCheckoutOrderReviewForm:deliveryDetailsChangeButton" onclick="RichFaces.ajax(&quot;expressCheckoutOrderReviewForm:deliveryDetailsChangeButton&quot;,event,{&quot;incId&quot;:&quot;1&quot;} );return false;" value="Change delivery details" class="grayButton tertiary" type="submit">
+		<div class="clearBoth"></div>
+		</div>
+		</div>
+				<div class="clearBoth"></div>
+			</div>
+			<div class="grayBorderBox">
+				<div class="exPaymentRightBox">
+		<script type="text/javascript" language="javascript">
+			function checkTempCvv(cvvNumElement, maxLength) {
+				if(cvvNumElement.value.length==maxLength) {
+					populateTempCvv(cvvNumElement.value);
+				}
+			}
+		</script><div id="expressCheckoutOrderReviewForm:expressCheckoutPaymentSection"><span id="expressCheckoutOrderReviewForm:j_idt523" style="display: none;"><script type="text/javascript">populateTempCvv=function(param){RichFaces.ajax("expressCheckoutOrderReviewForm:j_idt523",null,{"incId":"1","parameters":{"param":param} } )};</script></span>
+			<div class="textTitle bottom10 floatLeft">
+				Additional Details
+			
+			</div>
+			<div class="clearBoth"></div></div><div id="expressCheckoutOrderReviewForm:ccListiv">
+	<div class="top5" id="expressCheckoutCodesId">
+		<div class="formLabel">Cost Centre</div>
+		<div class="formValue"><select name="expressCheckoutOrderReviewForm:j_idt636" class="formInput" size="1">	<option value=" ">Not required</option>
+</select><br><a href="https://uk.rs-online.com/web/co/orderreview/?cid=293890#" id="expressCheckoutOrderReviewForm:j_idt639" name="expressCheckoutOrderReviewForm:j_idt639" onclick="RichFaces.ajax(&quot;expressCheckoutOrderReviewForm:j_idt639&quot;,event,{&quot;incId&quot;:&quot;1&quot;} );return false;" class="top2 link1 floatLeft">
+						<span>Add cost centre</span></a>
+		</div>
+	</div><div class="clearBoth"></div></div><div id="expressCheckoutOrderReviewForm:boListiv">
+	<div class="top5" id="expressCheckoutCodesId">
+		<div class="formLabel">Blanket order number</div>
+		<div class="formValue"><select name="expressCheckoutOrderReviewForm:j_idt658" class="formInput" size="1">	<option value=" ">Not required</option>
+</select><br><a href="https://uk.rs-online.com/web/co/orderreview/?cid=293890#" id="expressCheckoutOrderReviewForm:j_idt661" name="expressCheckoutOrderReviewForm:j_idt661" onclick="RichFaces.ajax(&quot;expressCheckoutOrderReviewForm:j_idt661&quot;,event,{&quot;incId&quot;:&quot;1&quot;} );return false;" class="top2 link1 floatLeft">
+						<span>Add blanket order</span></a>
+		</div>
+	</div></div>
+					<div class="clearBoth"></div>
+				</div>
+	<div class="CollectionDeliveryContainer">
+			<div class="textTitle floatLeft">Payment</div>	<div class="clearBoth"></div>
+		<div class="exLeftBox">
+			<div class="paymentDisplayContainer">
+		<div class="displayPaymentDiv COM48">
+			<div class="formField"><span class="formLabel text">Payment type</span><span class="formValue nonSelected">RS Account</span>
+			</div>
+		</div><div class="clearBoth"></div>
+			<div class="customerAccountNumberDisplayDiv formField COM56"><span class="formLabel">Account number</span><span class="nonSelected formValue">4416574</span>
+			</div>
+		<div class="displayOrderNumberDiv COM53 formField">
+			<!-- Register the event and store the id to be attached to the s:div in a later phase --><div id="expressCheckoutOrderReviewForm:DisplayOrderNumberWidgetActionPAGE_REFRESH_EVENT"></div>
+		</div>
+			<div class="invoiceDisplayDiv invoiceDisplayVertical C109A formField"><span class="formLabel">Invoice address</span>
+				<div class="formValue nonSelected">
+				            TTP PLC,<br>
+				            MELBOURN SCIENCE PARK, <br>
+				            CAMBRIDGE ROAD, <br>
+				           ROYSTON, <br>
+				            HERTFORDSHIRE, <br>
+				            SG8 6EE, <br>
+				            UK 
+				      
+				</div>
+			</div>
+			</div><span id="expressCheckoutOrderReviewForm:j_idt882"></span><div id="expressCheckoutOrderReviewForm:j_idt887"><input id="expressCheckoutOrderReviewForm:paymentDetailsChangeButton" name="expressCheckoutOrderReviewForm:paymentDetailsChangeButton" onclick="RichFaces.ajax(&quot;expressCheckoutOrderReviewForm:paymentDetailsChangeButton&quot;,event,{&quot;incId&quot;:&quot;1&quot;} );return false;" value="Change payment details" class="grayButton tertiary" type="submit"></div><div class="clearBoth"></div>
+
+		</div>
+	</div>
+				<div class="clearBoth"></div>
+			</div>
+				<div class="grayBorderBox">
+	<div class="deliveryTypeContainer"><div class="halfWidth ">
+			<div class="textTitle floatLeft">Delivery option</div></div><div class="clearBoth"></div>
+			<div class="floatLeft top20">
+			<div class="deliveryOptionSelectedDisplay C15 formField"><span class="text formLabel">Delivery option</span><span class="text formValue nonSelected">Next working day (despatch Mon,15 Mar 2021) – applies to stocked products only</span>
+			</div></div>
+		<div class="clearBoth"></div><div id="expressCheckoutOrderReviewForm:j_idt918">
+				<a class="cssButton tertiary grey bottom20" style="color:black" href="https://uk.rs-online.com/web/ca/basketsummary/">
+					<span>Change delivery option</span>
+				</a></div>
+	</div><div class="clearBoth"></div>
+				</div>
+			<div class="clearBoth"></div>
+				<div class="leftBorder rightBorder floatLeft">
+		<div class="productLabelDisplayDiv COM63 COM64"><span class="reviewStockedHeader textTitle">Stocked products</span>
+		</div></div>
+				<div class="orderlinesContainer"><div id="expressCheckoutOrderReviewForm:CoreDisplayBasketWidgetActionPaginationRefreshEventId">
+
+		<table align="center" width="100%;" border="0" cellspacing="0" cellpadding="0" class="cartTable displayCartTable">
+			<tbody><tr>
+				<th></th>
+				<th class="layerTitleText left">Description</th>
+				<th class="layerTitleText left">Qty</th>
+					<th class="layerTitleText last">Units</th>
+					<th class="layerTitleText last">Cost</th>
+			</tr>
+				<tr><td colspan="7" class="order-line-spacer"></td></tr>
+					<tr>
+							<td colspan="7" id="atpRow-">
+							</td>							
+					</tr>
+				<tr class="dataRow">
+					<td class="lineImgTd"><div> 
+								<!--  Line 37 -->
+								<img src="./RS checkout complete_files/F1306123-01.jpg" alt="Microchip Atmel-ICE, Programming Kit for SAM and Atmel AVR Microcontrollers" title="Microchip Atmel-ICE, Programming Kit for SAM and Atmel AVR Microcontrollers">
+						</div>
+					</td>
+					<td class="descriptionTd" style="width:380px;"><div>Microchip Atmel-ICE, Programming Kit for SAM and Atmel AVR Microcontrollers
+							<div>
+								<span class="labelText right5">RS Stock No.</span>
+								<span class="textTitle">130-6123</span>
+							</div>
+							<div class="text">
+								<span class="labelText right5">Brand</span>
+								Microchip
+							</div>
+							<div class="text">
+								<span class="labelText right5">Mfr. Part No.</span>
+								ATATMEL-ICE-BASIC
+							</div><span id="expressCheckoutOrderReviewForm:j_idt957:0:pgRohsStatus_18_19">
+							<div class="text"><span class="labelText right5">RoHS status:</span>Compliant</div></span><span id="expressCheckoutOrderReviewForm:j_idt957:0:pgGreenTax">
+							<div class="text"> 
+							</div></span>	
+						</div>
+					</td>
+					<td class="quantityTd costColumn">1
+								<div class="atpDiv normal">
+													<div class="green top5 bold"><span class="floatLeft deliveryInfoIconGreen right5"></span>1 In stock - FREE next working day delivery available<div class="clearBoth"></div></div>										
+										</div>
+								
+							</td>
+					<td class="unitTd lineUnitPricing"><div>£95.35</div><div>Each</div><span id="expressCheckoutOrderReviewForm:j_idt957:0:pgYouPay">
+							<div class="lineCostYouPay"><span class="right5">You pay</span>£81.048</div></span>	
+					</td>
+						<td class="costTd last">			
+								<div class="costColumn">£81.05</div>	
+						</td>
+				</tr>				
+				<tr class="dataRowSeparator"><td colspan="8"><div></div></td></tr>
+				<script>jQuery(".dataRow").each(function(){jQuery(this).find('td:last-child').addClass('last');});</script>
+				<tr><td colspan="7" class="order-line-spacer"></td></tr>
+					<tr>
+							<td colspan="7" id="atpRow-">
+							</td>							
+					</tr>
+				<tr class="dataRow">
+					<td class="lineImgTd"><div> 
+								<!--  Line 37 -->
+								<img src="./RS checkout complete_files/R9093644-01.jpg" alt="Eclipse Neodymium Magnet 0.28kg, Width 5mm" title="Eclipse Neodymium Magnet 0.28kg, Width 5mm">
+						</div>
+					</td>
+					<td class="descriptionTd" style="width:380px;"><div>Eclipse Neodymium Magnet 0.28kg, Width 5mm
+							<div>
+								<span class="labelText right5">RS Stock No.</span>
+								<span class="textTitle">909-3644</span>
+							</div>
+							<div class="text">
+								<span class="labelText right5">Brand</span>
+								Eclipse
+							</div>
+							<div class="text">
+								<span class="labelText right5">Mfr. Part No.</span>
+								N837RS
+							</div><span id="expressCheckoutOrderReviewForm:j_idt957:1:pgRohsStatus_18_19">
+							<div class="text"><span class="labelText right5">RoHS status:</span>Compliant</div></span><span id="expressCheckoutOrderReviewForm:j_idt957:1:pgGreenTax">
+							<div class="text"> 
+							</div></span>	
+						</div>
+					</td>
+					<td class="quantityTd costColumn">1
+								<div class="atpDiv normal">
+													<div class="green top5 bold"><span class="floatLeft deliveryInfoIconGreen right5"></span>1 In stock - FREE next working day delivery available<div class="clearBoth"></div></div>										
+										</div>
+								
+							</td>
+					<td class="unitTd lineUnitPricing"><div>£8.33</div><div>1 Tube of 50</div><span id="expressCheckoutOrderReviewForm:j_idt957:1:pgYouPay">
+							<div class="lineCostYouPay"><span class="right5">You pay</span>£7.081</div></span>	
+					</td>
+						<td class="costTd last">			
+								<div class="costColumn">£7.08</div>	
+						</td>
+				</tr>				
+				<tr class="dataRowSeparator"><td colspan="8"><div></div></td></tr>
+				<script>jQuery(".dataRow").each(function(){jQuery(this).find('td:last-child').addClass('last');});</script>
+				<tr><td colspan="7" class="order-line-spacer"></td></tr>
+					<tr>
+							<td colspan="7" id="atpRow-">
+							</td>							
+					</tr>
+				<tr class="dataRow">
+					<td class="lineImgTd"><div> 
+								<!--  Line 37 -->
+								<img src="./RS checkout complete_files/R1834289-01.jpg" alt="RS PRO LIR2016 Button Battery, 3.7V, 20mm Diameter" title="RS PRO LIR2016 Button Battery, 3.7V, 20mm Diameter">
+						</div>
+					</td>
+					<td class="descriptionTd" style="width:380px;"><div>RS PRO LIR2016 Button Battery, 3.7V, 20mm Diameter
+							<div>
+								<span class="labelText right5">RS Stock No.</span>
+								<span class="textTitle">183-4289</span>
+							</div>
+							<div class="text">
+								<span class="labelText right5">Brand</span>
+								RS PRO
+							</div>
+							<div class="text">
+								<span class="labelText right5">Mfr. Part No.</span>
+								LIR2016
+							</div><span id="expressCheckoutOrderReviewForm:j_idt957:2:pgRohsStatus_18_19">
+							<div class="text"><span class="labelText right5">RoHS status:</span>Compliant</div></span><span id="expressCheckoutOrderReviewForm:j_idt957:2:pgGreenTax">
+							<div class="text"> 
+							</div></span>	
+						</div>
+					</td>
+					<td class="quantityTd costColumn">1
+								<div class="atpDiv normal">
+													<div class="green top5 bold"><span class="floatLeft deliveryInfoIconGreen right5"></span>1 In stock - FREE next working day delivery available<div class="clearBoth"></div></div>										
+										</div>
+								
+							</td>
+					<td class="unitTd lineUnitPricing"><div>£1.54</div><div>Each</div><span id="expressCheckoutOrderReviewForm:j_idt957:2:pgYouPay">
+							<div class="lineCostYouPay"><span class="right5">You pay</span>£1.425</div></span>	
+					</td>
+						<td class="costTd last">			
+								<div class="costColumn">£1.42</div>	
+						</td>
+				</tr>				
+				<tr class="dataRowSeparator"><td colspan="8"><div></div></td></tr>
+				<script>jQuery(".dataRow").each(function(){jQuery(this).find('td:last-child').addClass('last');});</script>
+				<tr><td colspan="7" class="order-line-spacer"></td></tr>
+					<tr>
+							<td colspan="7" id="atpRow-">
+							</td>							
+					</tr>
+				<tr class="dataRow">
+					<td class="lineImgTd"><div> 
+								<!--  Line 37 -->
+								<img src="./RS checkout complete_files/R9106854-01.jpg" alt="Infineon KIT_XMC1X_AK_MOTOR_001 Application Kit DC Evaluation Board for XMC1300" title="Infineon KIT_XMC1X_AK_MOTOR_001 Application Kit DC Evaluation Board for XMC1300">
+						</div>
+					</td>
+					<td class="descriptionTd" style="width:380px;"><div>Infineon KIT_XMC1X_AK_MOTOR_001 Application Kit DC Evaluation Board for XMC1300
+							<div>
+								<span class="labelText right5">RS Stock No.</span>
+								<span class="textTitle">910-6854</span>
+							</div>
+							<div class="text">
+								<span class="labelText right5">Brand</span>
+								Infineon
+							</div>
+							<div class="text">
+								<span class="labelText right5">Mfr. Part No.</span>
+								KIT_XMC1X_AK_MOTOR_001
+							</div><span id="expressCheckoutOrderReviewForm:j_idt957:3:pgRohsStatus_18_19">
+							<div class="text"><span class="labelText right5">RoHS status:</span>Not compliant</div></span><span id="expressCheckoutOrderReviewForm:j_idt957:3:pgGreenTax">
+							<div class="text"> 
+							</div></span>	
+						</div>
+					</td>
+					<td class="quantityTd costColumn">5
+								<div class="atpDiv normal">
+												<div class="green bold"><span class="floatLeft deliveryInfoIconGreen right5"></span>4 In stock - FREE next working day delivery available</div>
+													<div class="amber top5"><span class="floatLeft deliveryInfoIconAmber right5"></span>  1 Available to back order for despatch 05/10/2021<div class="clearBoth"></div></div>										
+										</div>
+								
+							</td>
+					<td class="unitTd lineUnitPricing"><div>£136.03</div><div>Each</div><span id="expressCheckoutOrderReviewForm:j_idt957:3:pgYouPay">
+							<div class="lineCostYouPay"><span class="right5">You pay</span>£118.346</div></span>	
+					</td>
+						<td class="costTd last">			
+								<div class="costColumn">£591.73</div>	
+						</td>
+				</tr>				
+				<tr class="dataRowSeparator"><td colspan="8"><div></div></td></tr>
+				<script>jQuery(".dataRow").each(function(){jQuery(this).find('td:last-child').addClass('last');});</script>
+				<tr><td colspan="7" class="order-line-spacer"></td></tr>
+					<tr>
+							<td colspan="7" id="atpRow-">
+							</td>							
+					</tr>
+				<tr class="dataRow">
+					<td class="lineImgTd"><div> 
+								<!--  Line 37 -->
+								<img src="./RS checkout complete_files/F9058786-01.jpg" alt="RS PRO Stepper Motor Controller 2.2 A, 24 → 48V, 78 x 68 x 21mm" title="RS PRO Stepper Motor Controller 2.2 A, 24 → 48V, 78 x 68 x 21mm">
+						</div>
+					</td>
+					<td class="descriptionTd" style="width:380px;"><div>RS PRO Stepper Motor Controller 2.2 A, 24 → 48V, 78 x 68 x 21mm
+							<div>
+								<span class="labelText right5">RS Stock No.</span>
+								<span class="textTitle">905-8786</span>
+							</div>
+							<div class="text">
+								<span class="labelText right5">Brand</span>
+								RS PRO
+							</div>
+							<div class="text">
+								<span class="labelText right5">Mfr. Part No.</span>
+								904254
+							</div><span id="expressCheckoutOrderReviewForm:j_idt957:4:pgRohsStatus_18_19">
+							<div class="text"><span class="labelText right5">RoHS status:</span>Compliant</div></span><span id="expressCheckoutOrderReviewForm:j_idt957:4:pgGreenTax">
+							<div class="text"> 
+							</div></span>	
+						</div>
+					</td>
+					<td class="quantityTd costColumn">1
+								<div class="atpDiv normal">
+													<div class="amber top5"><span class="floatLeft deliveryInfoIconAmber right5"></span>  1 Available to back order for despatch 11/05/2021<div class="clearBoth"></div></div>										
+										</div>
+								
+							</td>
+					<td class="unitTd lineUnitPricing"><div>£84.89</div><div>Each</div><span id="expressCheckoutOrderReviewForm:j_idt957:4:pgYouPay">
+							<div class="lineCostYouPay"><span class="right5">You pay</span>£78.523</div></span>	
+					</td>
+						<td class="costTd last">			
+								<div class="costColumn">£78.52</div>	
+						</td>
+				</tr>				
+				<tr class="dataRowSeparator"><td colspan="8"><div></div></td></tr>
+				<script>jQuery(".dataRow").each(function(){jQuery(this).find('td:last-child').addClass('last');});</script>
+				<tr><td colspan="7" class="order-line-spacer"></td></tr>
+					<tr>
+							<td colspan="7" id="atpRow-">
+							</td>							
+					</tr>
+				<tr class="dataRow">
+					<td class="lineImgTd"><div> 
+								<!--  Line 37 -->
+								<img src="./RS checkout complete_files/F2389816-01.jpg" alt="RS PRO, DC Motor Controller, Voltage Control, 6 → 15 V dc, 3 A, Freestanding" title="RS PRO, DC Motor Controller, Voltage Control, 6 → 15 V dc, 3 A, Freestanding">
+						</div>
+					</td>
+					<td class="descriptionTd" style="width:380px;"><div>RS PRO, DC Motor Controller, Voltage Control, 6 → 15 V dc, 3 A, Freestanding
+							<div>
+								<span class="labelText right5">RS Stock No.</span>
+								<span class="textTitle">238-9816</span>
+							</div>
+							<div class="text">
+								<span class="labelText right5">Brand</span>
+								RS PRO
+							</div>
+							<div class="text">
+								<span class="labelText right5">Mfr. Part No.</span>
+								919D2
+							</div><span id="expressCheckoutOrderReviewForm:j_idt957:5:pgRohsStatus_18_19">
+							<div class="text"><span class="labelText right5">RoHS status:</span>Compliant</div></span><span id="expressCheckoutOrderReviewForm:j_idt957:5:pgGreenTax">
+							<div class="text"> 
+							</div></span>	
+						</div>
+					</td>
+					<td class="quantityTd costColumn">54
+								<div class="atpDiv normal">
+												<div class="green bold"><span class="floatLeft deliveryInfoIconGreen right5"></span>53 In stock - FREE next working day delivery available</div>
+													<div class="amber top5"><span class="floatLeft deliveryInfoIconAmber right5"></span>  1 Available to back order for despatch 21/04/2021<div class="clearBoth"></div></div>										
+										</div>
+								
+							</td>
+					<td class="unitTd lineUnitPricing"><div>£12.23</div><div>Each</div><span id="expressCheckoutOrderReviewForm:j_idt957:5:pgYouPay">
+							<div class="lineCostYouPay"><span class="right5">You pay</span>£11.313</div></span>	
+					</td>
+						<td class="costTd last">			
+								<div class="costColumn">£610.89</div>	
+						</td>
+				</tr>				
+				<tr class="dataRowSeparator"><td colspan="8"><div></div></td></tr>
+				<script>jQuery(".dataRow").each(function(){jQuery(this).find('td:last-child').addClass('last');});</script>
+				<tr><td colspan="7" class="order-line-spacer"></td></tr>
+					<tr>
+							<td colspan="7" id="atpRow-">
+							</td>							
+					</tr>
+				<tr class="dataRow">
+					<td class="lineImgTd"><div> 
+								<!--  Line 37 -->
+								<img src="./RS checkout complete_files/R7704119-01.jpg" alt="RS PRO, 0402 (1005M) 2.2nF Multilayer Ceramic Capacitor MLCC 16V dc ±10% , SMD" title="RS PRO, 0402 (1005M) 2.2nF Multilayer Ceramic Capacitor MLCC 16V dc ±10% , SMD">
+						</div>
+					</td>
+					<td class="descriptionTd" style="width:380px;"><div>RS PRO, 0402 (1005M) 2.2nF Multilayer Ceramic Capacitor MLCC 16V dc ±10% , SMD
+							<div>
+								<span class="labelText right5">RS Stock No.</span>
+								<span class="textTitle">770-4112</span>
+							</div>
+							<div class="text">
+								<span class="labelText right5">Brand</span>
+								RS PRO
+							</div>
+							<div class="text">
+								<span class="labelText right5">Mfr. Part No.</span>
+								MC02KTB160222
+							</div><span id="expressCheckoutOrderReviewForm:j_idt957:6:pgRohsStatus_18_19">
+							<div class="text"><span class="labelText right5">RoHS status:</span>Compliant</div></span><span id="expressCheckoutOrderReviewForm:j_idt957:6:pgGreenTax">
+							<div class="text"> 
+							</div></span>	
+						</div>
+					</td>
+					<td class="quantityTd costColumn">10000
+								<div class="atpDiv normal">
+													<div class="red top5"><span class="floatLeft deliveryInfoIconRed right5"></span>Available to back order for despatch when stock is available<div class="clearBoth"></div></div>										
+										</div>
+								
+							</td>
+					<td class="unitTd lineUnitPricing"><div>£0.002</div><div>Each (On a Reel of 10000)</div>	
+					</td>
+						<td class="costTd last">			
+								<div class="costColumn">£17.41</div>	
+						</td>
+				</tr>				
+				<tr class="dataRowSeparator"><td colspan="8"><div></div></td></tr>
+				<script>jQuery(".dataRow").each(function(){jQuery(this).find('td:last-child').addClass('last');});</script>
+		</tbody></table></div>
+				</div><div class="clearBoth"></div>
+					<div class="reviewNavigationDiv">
+							<div class="mediaIconDivs"><div class="mediaIconDiv">
+	<div><div id="expressCheckoutOrderReviewForm:PrintWidgetActionPAGE_REFRESH_EVENT"><a href="https://uk.rs-online.com/web/co/orderreview/?cid=293890#" onmouseout="hideHelp(this);" onmouseover="showHelp(this);" onclick="mojarra.jsfcljs(document.getElementById(&#39;expressCheckoutOrderReviewForm&#39;),{&#39;expressCheckoutOrderReviewForm:j_idt1111&#39;:&#39;expressCheckoutOrderReviewForm:j_idt1111&#39;,&#39;ConfToken&#39;:&#39;1&#39;},&#39;_blank&#39;);return false" class="chckoutActionLink">
+						<i class="icon icon-rs_47-print"></i>
+						<span>Print</span></a></div>
+	</div>
+							</div></div>
+							<div class="floatRight"><div class="paginationContainer COM32"><div id="expressCheckoutOrderReviewForm:OrderReviewStockedProductPaginationWidgetActionPAGE_REFRESH_EVENT"></div>
+							</div></div>
+					</div><div class="clearBoth"></div>
+			<div class="top25 right">
+			</div><div class="clearBoth"></div>
+	<script type="text/javascript" language="javascript">
+		jQuery(document).ready(function() {
+			var errorPresent = jQuery('.notifDiv').find('.validationErrorText');
+			var checkboxes = $('input.orderreviewtermscondchkbox');
+
+			checkboxes.on('change', function() {
+				var self = $(this);
+				if(self.prop('checked')) {
+						checkboxes.prop('checked', true);
+					}else {
+						checkboxes.prop('checked', false);
+					}
+			});
+
+			if(errorPresent.length){
+				jQuery('.TnCbackground').css('border-color','#D00000');
+				jQuery('.TnCbackground').css('background-color','#FFE6E6');
+				location.href = "#scrollPageTnC";}
+				errorPresent=null;
+				errorPresent = jQuery('#ccverr').find('.validationErrorText');
+				if(errorPresent.length){location.href = "#scrollPageCVV";}
+		});
+	</script><div id="expressCheckoutOrderReviewForm:CheckoutNotificationSettingsWidgetAction_faoContactDetailsDisplayDiv" class="checkoutNotificationDiv C108">
+			<table cellpadding="0" cellspacing="0" border="0" width="100%">
+				<tbody><tr>
+						<td class="leftColumn" align="right">
+								<div class="floatRight right5 relative">
+									<div class="helpInputDiv"><span class="checkbox text floatLeft top2">I would like to receive emails about the status of my order</span><input id="expressCheckoutOrderReviewForm:recieveOrderStatusChkBox" type="checkbox" name="expressCheckoutOrderReviewForm:recieveOrderStatusChkBox" checked="checked" class="checkbox inputText" onclick="RichFaces.ajax(this,event,{&quot;sourceId&quot;:this,&quot;parameters&quot;:{&quot;javax.faces.behavior.event&quot;:&quot;click&quot;,&quot;org.richfaces.ajax.component&quot;:&quot;expressCheckoutOrderReviewForm:recieveOrderStatusChkBox&quot;} } )">
+<div class="helpContainer "><img src="./RS checkout complete_files/formhelp.gif" class="helpIcon" onmouseover="fadeInHelp(this);" onmouseout="hideHelp(this);;">
+	<div class="helpPopupMainDiv helpBalloon" onmouseover="showHelp(this);" onmouseout="hideHelp(this);">	
+		 <div class="helpPopupDiv">
+		 <img src="./RS checkout complete_files/formHelpPointer.gif" class="helpPopupPointer helpBalloon pointerLeft">
+		 <img src="./RS checkout complete_files/formHelpPointerRight.gif" class="helpPopupPointer helpBalloon pointerRight">
+		 <div class="formHelpTitle"><span class="formHelpTitle">Order status notification</span></div>
+			  <table><tbody><tr><td valign="top"><span class="formHelpText">If you choose, we can email you with information on the progress of your order</span><span class="formHelpText">e.g. order received, order processed, order despatched etc.</span>
+			  </td></tr></tbody></table>
+			  <div class="clearBoth"></div>
+	</div>
+	</div>	
+</div>
+									</div>
+								</div><span id="expressCheckoutOrderReviewForm:sendNotificationTo">
+								<div class="floatRight top20 right35">
+									<div class="formField"><div id="expressCheckoutOrderReviewForm:CheckoutNotificationSettingsWidgetAction_notificationAddress_decorate">
+     <span>
+		<div class="clientSideError" style="display:none;"></div><span class="textInput text right10">Email notifications to</span><input id="expressCheckoutOrderReviewForm:CheckoutNotificationSettingsWidgetAction_notificationAddress_decorate:CheckoutNotificationSettingsWidgetAction_notificationAddress" type="text" name="expressCheckoutOrderReviewForm:CheckoutNotificationSettingsWidgetAction_notificationAddress_decorate:CheckoutNotificationSettingsWidgetAction_notificationAddress" value="joel.bowring@ttp.com" class="inputText emailText" maxlength="64">
+    </span></div>
+										
+										<br><span class=" text">You can opt out of receiving marketing communications at any time by editing your preferences in ‘My Account’ area, which you can access through the link in the navigation bar, or by clicking ‘Unsubscribe’ in each email. Further information on how we process personal data can be found in our </span>
+											<a href="javascript:showQuickView(&#39;termsConditionsModalPanel&#39;, {url:&#39;/web/generalDisplay.html?id=aboutRS/privacy-policy&#39;})">
+												Privacy Policy
+											</a>
+										
+									</div>
+								</div></span></td>
+					<td>
+							<div class="orderTotalDiv">
+
+<table class="orderTotalTbl " border="0" cellpadding="0" cellspacing="0">
+    <tbody><tr>	
+      <td class="orderLabelCell text"><span class="OrderSummaryText">Goods total</span>
+      </td>
+      <td class="orderValueCell">£1,388.10
+	  </td>
+    </tr>
+	 	<tr>
+	      <td colspan="3">
+		<div class="youSaveDiv C44">
+			<div class="yousaved label">You saved
+			</div>
+			<div class="lineCostYouPayLarge value"> £162.58
+			</div>
+		</div>
+	      </td>
+	    </tr>
+    <tr>
+      <td class="orderLabelCell text"><span class="OrderSummaryText">Delivery</span>
+      </td>
+	  <td class="orderValueCell">
+	          <div class="freeDeliveryDiv floatRight">Free</div>
+	  </td>
+    </tr>
+    <tr>
+      <td class="orderLabelCell text"><span class="OrderSummaryText">VAT</span>
+      </td>
+	<td class="orderValueCell">£277.62
+	  </td>
+    </tr>
+</tbody></table>
+									<div class="clearBoth"></div>
+								<div class="clearBoth"></div>
+	<div class="grandTotalDiv costColumn">
+			<div class="grandTotalCost floatRight"><span class="textTitle OrderSummaryGrandTotal">£1,665.72</span></div><span class="floatRight OrderSummaryGrandTotal">Grand total</span>
+	</div>
+							</div></td>
+				</tr>
+				<tr>
+					<td colspan="2" class="tnsTd">	
+						<div class="floatRight top30 termsandcondschilddivwidth2 TnCbackground">
+	<div class="floatRight termsandcondsmaindivwidth notifDiv">
+		<a name="scrollPageTnC"></a>
+
+		<div class="floatRight termsandcondschilddivwidth2">
+			<div class="floatRight termsandcondschilddivwidth"><span class="text">By placing your order you agree to the </span>
+						<a class="link1" href="javascript:showQuickView(&#39;termsConditionsModalPanel&#39;, {url:&#39;/web/generalDisplay.html?id=aboutRS&amp;file=conditions&#39;})">
+							RS Terms and Conditions of Sale
+						</a>
+			</div>
+		</div>
+	</div>
+					</div>
+					</td>
+				</tr>
+			</tbody></table></div>
+			<div class="clearBoth"></div>
+			<div class="checkoutNavigationContainer COM73">
+
+		<span class="toggleBtnState"><a href="https://uk.rs-online.com/web/co/orderreview/?cid=293890#" onclick="jsf.util.chain(this,event,&#39;raiseAnalyticsEvent(\&#39;CheckOutReviewPage\&#39;);&#39;,&#39;mojarra.jsfcljs(document.getElementById(\&#39;expressCheckoutOrderReviewForm\&#39;),{\&#39;expressCheckoutOrderReviewForm:j_idt1414\&#39;:\&#39;expressCheckoutOrderReviewForm:j_idt1414\&#39;},\&#39;\&#39;)&#39;);return false" class="cssButton primary blue enabledBtn">
+						<span id="checkoutSecurelyBtn">Place order</span></a>
+			<a class="hide cssButton primary inactive disabledBtn" href="javascript:;">
+				<span>Place order</span>
+			</a>
+		</span>
+			</div>
+			<div class="clearBoth"></div>
+		</div><div id="expressCheckoutOrderReviewForm:termsConditionsModalPanel" style="visibility: hidden;"><div class="rf-pp-shade" id="expressCheckoutOrderReviewForm:termsConditionsModalPanel_shade" style="z-index:100;"><button class="rf-pp-btn" id="expressCheckoutOrderReviewForm:termsConditionsModalPanelFirstHref" name="expressCheckoutOrderReviewForm:termsConditionsModalPanelfirstHref"></button></div><div class="rf-pp-cntr redModalPanel loginModelPanel" id="expressCheckoutOrderReviewForm:termsConditionsModalPanel_container" style="position: fixed; z-index:100; "><div class="rf-pp-shdw" id="expressCheckoutOrderReviewForm:termsConditionsModalPanel_shadow" style="opacity: 0.1;"></div><div class="rf-pp-hdr " id="expressCheckoutOrderReviewForm:termsConditionsModalPanel_header" style="cursor: move;"><div class="rf-pp-hdr-cnt" id="expressCheckoutOrderReviewForm:termsConditionsModalPanel_header_content"><span class="layerTitleText">RS Terms and Conditions of Sale</span></div></div><div class="rf-pp-hdr-cntrls " id="expressCheckoutOrderReviewForm:termsConditionsModalPanel_header_controls">
+				<img src="./RS checkout complete_files/close.gif" class="loginCloseIcn" id="termsConditionsFrameClose" title="Close" onclick="RichFaces.component(&#39;expressCheckoutOrderReviewForm:termsConditionsModalPanel&#39;).hide()"></div><div class="rf-pp-cnt-scrlr" id="expressCheckoutOrderReviewForm:termsConditionsModalPanel_content_scroller"><div class="rf-pp-cnt" id="expressCheckoutOrderReviewForm:termsConditionsModalPanel_content">	
+		<iframe src="./RS checkout complete_files/ajaxLoader.html" width="800" height="530" class="termsConditionsFrame" frameborder="0"></iframe></div></div></div><script type="text/javascript">new RichFaces.ui.PopupPanel("expressCheckoutOrderReviewForm:termsConditionsModalPanel",{"autosized":true,"onshow":function(event){loadTermsconditionFrameUrl('termsConditionsModalPanel')}} );</script></div><input type="hidden" name="javax.faces.ViewState" id="javax.faces.ViewState" value="-24657714347356864:-6172927469977627172" autocomplete="off">
+</form>
+		<div class="backToTop" style="display: none;">
+			<a href="https://uk.rs-online.com/web/co/orderreview/?cid=293890#" title="Back to top"> </a>
+		</div>
+				</div>
+		<div class="clearBoth"></div><!--Div to clear the floats of main Divs-->
+		<div class="footerDiv"><!--Footer Div starts-->
+			<div class="footerPaymentDiv">
+					<div class="floatRight">
+							<a target="_blank" href="https://sealinfo.thawte.com/thawtesplash?form_file=fdf/thawtesplash.fdf&amp;dn=*.RS-ONLINE.COM&amp;lang=en" title="View security certificate"><img src="./RS checkout complete_files/footerSecurityLogo.gif" alt="View security certificate">
+							</a>
+					</div><img src="./RS checkout complete_files/paymentOptions.gif">
+			</div>
+			<div class="footerAddressDiv"><img src="./RS checkout complete_files/footerRSLogo.gif" class="footerRsLogo floatLeft">
+					<div><strong><span class="footerAddress1">© RS Components Ltd.</span></strong><span class="footerAddress2">Birchington Road, Corby, Northants, NN17 9RS, UK</span></div>
+			</div>
+		</div><!--Footer Div ends-->
+	<!-- Confirmit Survey -->
+	<!-- Live Chat -->
+		<script type="text/javascript" src="./RS checkout complete_files/remote.js.download"></script>
+		<script type="text/javascript" src="./RS checkout complete_files/interface.js.download"></script>
+
+		<script type="text/javascript">
+			var sessTimeoutUrl = "/web/";
+			var sessionTimeoutValue = "1200";
+			var sessionTimeOutInMilis = sessionTimeoutValue * 1000; // Coverting in mili seconds.
+			var timeoutMillis = sessionTimeOutInMilis + 300000;	// sessionTimeout value plus small margin. (5 mins = 300000 ms)
+			var sessionTimeoutInterval = null;
+			var serverSideStateChecker = Seam.Component.getInstance("ServerSideStateChecker");
+
+			// Don't display the please wait loading indicator.
+			Seam.Remoting.displayLoadingMessage = function() {};
+			Seam.Remoting.hideLoadingMessage = function() {}; 
+			
+		    function startSessionTimeoutCheck() {
+		        sessionTimeoutInterval = setInterval('serverSideStateChecker.sessionOk(alertTimeout)', timeoutMillis);
+		    }
+
+		    function stopSessionTimeoutCheck() {
+		        if (sessionTimeoutInterval) clearInterval(sessionTimeoutInterval);
+		    }
+
+		    function resetSessionTimeoutCheck() {
+		        stopSessionTimeoutCheck();
+		        startSessionTimeoutCheck();
+		    }
+
+		    /**
+		     * Call this from ajax buttons in page which do not cause a full page refresh - oncomplete="onAjaxRequestComplete()"
+		     */
+		    function onAjaxRequestComplete() {
+		        resetSessionTimeoutCheck();
+		    }
+		    
+		    function alertTimeout(sessionOk) {
+		        if (!sessionOk) {
+		            window.location = sessTimeoutUrl;
+		        }
+		    }
+		    
+			function handleSessionStateCallback(serverSideStateOk) {
+				//alert("session check callback, state ok: " + serverSideStateOk);
+				if (!serverSideStateOk) {
+					window.location = sessTimeoutUrl;
+				}
+				resetSessionTimeoutCheck();
+			}
+
+			function handleLongRunningCallback(longRunningConversationOk) {
+				//alert("long running conversation check callback, state ok: " + serverSideStateOk);
+				var convTimeoutUrl = "/web/";
+				
+				if (!longRunningConversationOk) {
+					window.location = convTimeoutUrl;
+				}
+				resetSessionTimeoutCheck();
+			}
+		</script>
+		<script type="text/javascript">
+			var hasShownFocus = false;
+			
+			function recordHasFocus(state) {
+				var inLongRunningConversation = true;
+		
+				if (hasShownFocus == false) {
+
+					//alert("recording has shown focus");
+					
+					if (!inLongRunningConversation) {
+						hasShownFocus = true;
+		
+						serverSideStateChecker.sessionOk(state, handleSessionStateCallback);
+						
+					} else {
+						var currentConversationId = 293890;
+						
+						serverSideStateChecker.longRunningConversationOk(currentConversationId, state, handleLongRunningCallback);
+					}
+				}
+			}
+
+			jQuery(window).ready(function(){
+				recordHasFocus("ready");
+			});
+		
+			jQuery(window).focus(function(){
+				recordHasFocus("focus");
+			});
+			
+			jQuery(window).blur(function(){
+				
+				if (hasShownFocus == true) {
+					hasShownFocus = false;
+				}
+			});
+	
+		</script><span id="rssscIsLongRunningConversation" class="hide">true</span><span id="rssscLongRunningConversationId" class="hide">293890</span><span id="rssscSessionTimeoutUrl" class="hide">/web/</span><span id="rssscConversationTimeoutUrl" class="hide">/web/</span><span id="timeoutValue" class="hide">1200</span>
+			</div><script type="text/javascript">var _cf = _cf || [];  _cf.push(['_setFsp', true]);  _cf.push(['_setBm', true]);  _cf.push(['_setAu', '/resource/cc08c053ebrn198e03143844fdb90e81']); </script><script type="text/javascript" src="./RS checkout complete_files/cc08c053ebrn198e03143844fdb90e81"></script>
+</body></html>
