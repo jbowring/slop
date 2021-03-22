@@ -128,7 +128,7 @@ function RsParse(file, callback, config) {
                     'description' in product &&
                     !isNaN(quantity)
                 ) {
-                    for (const breakQuantity of Object.keys(breakPrices).sort().reverse()) {
+                    for (const breakQuantity of Object.keys(breakPrices).sort((a,b) => a-b).reverse()) {
                         if (quantity >= breakQuantity) {
                             let price = breakPrices[breakQuantity]
                             const pageDataDecimals = 3;
