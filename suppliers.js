@@ -33,5 +33,10 @@ const suppliers = {
         fileType: ".html",
         beta: true,
         decimalPlaces: 5,
+        instructions: [
+            'Before checkout, navigate to your RS basket page',
+            'Download the page as a .html file (not .mhtml)',
+            'Upload the .html file below',
+        ]
     },
 }

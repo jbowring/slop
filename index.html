@@ -79,6 +79,14 @@
             /*height: 80px;*/
             height: 40px;
         }
+
+        summary {
+            outline:none;
+        }
+
+        details {
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -98,7 +106,10 @@
     </div>
     <div class="row" id="div-process" hidden>
         <div class="col-sm-6" style="border-right: 1px solid #ccc;">
-            <h2 id="import-title">Import DigiKey order</h2>
+            <h2 id="import-title"></h2>
+            <details id="instructions">
+                <summary class="text-primary">Instructions</summary>
+            </details>
 
             <label for="file-input" id="file-input-label" hidden></label>
             <input style="display: none" type="file" id="file-input">
@@ -167,6 +178,17 @@
         let _supplier = suppliers[id];
         document.getElementById("div-supp").hidden = true;
         document.getElementById("import-title").innerText = "Import " + _supplier.name + " order";
+
+        if('instructions' in _supplier) {
+            let list = document.createElement('ol');
+            for (const instruction of _supplier.instructions) {
+                let li = document.createElement('li');
+                li.innerText = instruction;
+                list.appendChild(li);
+            }
+            document.getElementById('instructions').appendChild(list);
+        }
+
         document.getElementById('file-input-label').innerText = "Upload " + _supplier.name + " basket " + _supplier.fileType + " file";
         dropZonePrompt.innerHTML = "Drop " + _supplier.name + " basket " + _supplier.fileType + " here";
         dropZonePrompt.innerHTML += '<p style="font-size: 15px">(or click to choose a file)</p>';
