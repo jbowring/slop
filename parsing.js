@@ -69,6 +69,7 @@ function RsParse(file, callback, config) {
         let products = [];
         let errors = [];
         let showWarning = false;
+        const pageDataDecimals = 3;
         if(
             typeof pageData === 'object' &&
             'products' in pageData &&
@@ -131,7 +132,6 @@ function RsParse(file, callback, config) {
                     for (const breakQuantity of Object.keys(breakPrices).sort((a,b) => a-b).reverse()) {
                         if (quantity >= breakQuantity) {
                             let price = breakPrices[breakQuantity]
-                            const pageDataDecimals = 3;
                             if(i < totalCosts.length) {
                                 let webpageCost = totalCosts[i] / quantity;
                                 if(Math.abs(webpageCost - parseFloat(webpageCost.toFixed(pageDataDecimals))) > Number.EPSILON) {
