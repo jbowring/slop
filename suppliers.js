@@ -25,8 +25,7 @@ const suppliers = {
         name: "Mouser",
         type: "xls",
         fileType: ".xls",
-        beta: true,
-        decimalPlaces: 4,
+        decimalPlaces: 3,
     },
     "rs": {
         name: "RS",
