@@ -36,7 +36,7 @@ const suppliers = {
         instructions: [
             'Before checkout, navigate to your RS basket page',
             'Download the page as a .html file (not .mhtml)',
-            'Upload the .html file below',
+            'Upload the file below',
         ]
     },
 }
