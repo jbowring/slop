@@ -96,9 +96,6 @@
     <div class="row" id="div-process" hidden>
         <div class="col-sm-6" style="border-right: 1px solid #ccc;">
             <h2 id="import-title"></h2>
-            <details id="instructions">
-                <summary class="text-primary">Instructions</summary>
-            </details>
 
             <label for="file-input" id="file-input-label" hidden></label>
             <input style="display: none" type="file" id="file-input">
@@ -166,16 +163,25 @@
         supplier = id;
         let _supplier = suppliers[id];
         document.getElementById("div-supp").hidden = true;
-        document.getElementById("import-title").innerText = "Import " + _supplier.name + " order";
+        let importTitle = document.getElementById("import-title");
+        importTitle.innerText = "Import " + _supplier.name + " order";
 
         if('instructions' in _supplier) {
+            let details = document.createElement('details');
+            let summary = document.createElement('summary');
+            summary.innerText = "Instructions";
+            summary.className = "text-primary";
+            details.appendChild(summary);
+
             let list = document.createElement('ol');
             for (const instruction of _supplier.instructions) {
                 let li = document.createElement('li');
                 li.innerText = instruction;
                 list.appendChild(li);
             }
-            document.getElementById('instructions').appendChild(list);
+            details.appendChild(list);
+
+            importTitle.insertAdjacentElement('afterend', details)
         }
 
         document.getElementById('file-input-label').innerText = "Upload " + _supplier.name + " basket " + _supplier.fileType + " file";
