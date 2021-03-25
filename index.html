@@ -246,17 +246,13 @@
 
                 out += row.join('\t') + "\r\n";
             }
-            WriteClipboard(out, (success) => {
-                if(success) {
-                    setTimeout(() => {
-                        copyCompleteDiv.hidden = false;
-                    }, 100);
-                }
-            })
+            if(WriteClipboard(out)) {
+                setTimeout(() => copyCompleteDiv.hidden = false, 100);
+            }
         }
     }
 
-    function WriteClipboard(contents, callback) {
+    function WriteClipboard(contents) {
         let textArea = document.createElement("textarea");
 
         // Place in the top-left corner of screen regardless of scroll position.
@@ -299,7 +295,7 @@
 
         document.body.removeChild(textArea);
 
-        callback(success, contents);
+        return success;
     }
 
     function handleFile(file, error) {
@@ -317,7 +313,6 @@
         warningBox.hidden = true;
 
         copyCompleteDiv.hidden = true;
-        successBox.hidden = true;
 
         // noinspection JSUnresolvedVariable
         if(error) {
@@ -355,7 +350,9 @@
                         productCount += product.quantity;
                         totalCost += product.quantity * product.price;
                     }
-                    successBox.innerHTML = '<b>' + products.length + ' item' + (products.length>1?'s':'') + ' found </b><br>Total quantity: ' + productCount + "<br>Total cost: " + totalCost.toFixed(2);
+                    successBox.innerHTML = '<b>' + products.length + ' item' + (products.length>1?'s':'') + ' found </b><br>';
+                    successBox.innerHTML += 'Total quantity: ' + productCount + '<br>';
+                    successBox.innerHTML += 'Total cost: ' + totalCost.toFixed(2);
                     if(showWarning) {
                         setTimeout(() => warningBox.hidden = false, warningBoxWasHidden ? 0: 100);
                     }
@@ -367,10 +364,7 @@
             ValidatePage();
         }
 
-        let config = {}
-        if ('config' in supplier) {
-            config = supplier.config;
-        }
+        let config = 'config' in supplier ? supplier.config : {};
 
         if(supplier.type === "csv") {
             CsvParse(file, processDropzoneProducts, config);
@@ -389,22 +383,22 @@
         }
     }
 
-    function handleFileDrop(evt) {
-        evt.stopPropagation();
-        evt.preventDefault();
+    function handleFileDrop(event) {
+        event.stopPropagation();
+        event.preventDefault();
 
         // noinspection JSUnresolvedVariable
-        if(!(evt.dataTransfer.items[0].webkitGetAsEntry().isFile && evt.dataTransfer.files.length === 1)) {
+        if(!(event.dataTransfer.items[0].webkitGetAsEntry().isFile && event.dataTransfer.files.length === 1)) {
             handleFile(null, "Please upload a single file and try again.");
         } else {
-            handleFile(evt.dataTransfer.files[0], "");
+            handleFile(event.dataTransfer.files[0], "");
         }
     }
 
-    function handleDragOver(evt) {
-        evt.stopPropagation();
-        evt.preventDefault();
-        evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+    function handleDragOver(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
     }
 
     fileInput.addEventListener('change', handleFileInput, false);
