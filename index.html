@@ -101,8 +101,8 @@
             <input style="display: none" type="file" id="file-input">
             <div id="drop_zone" onclick="fileInput.click()">
                 <span style="font-size: 40pt" class="glyphicon glyphicon-file"></span><br>
-                <p class="dropzone-prompt"></p>
-                <p class="dropzone-filename" hidden></p>
+                <p id="dropzone-prompt"></p>
+                <p id="dropzone-filename" hidden></p>
             </div>
             <br>
             <div class="alert alert-danger" id="drop_zone-error" hidden></div>
@@ -144,8 +144,7 @@
 
     for (const [id, _supplier] of Object.entries(suppliers)) {
         let button = document.createElement('button');
-        button.id = id;
-        button.setAttribute('onclick', 'setSupplier(this.id)');
+        button.onclick = () => setSupplier(id);
         button.className = "btn btn-primary btn-lg btn-supp";
         button.innerText = _supplier.name + (_supplier.beta ? ' (beta)' : '');
         document.getElementById('supplier-select').appendChild(button);
@@ -155,18 +154,17 @@
     let productsValid = false;
 
     const fileInput = document.getElementById("file-input");
-    const dropZone = document.getElementById("drop_zone");
-    const dropZonePrompt = document.getElementsByClassName("dropzone-prompt")[0]
+    const dropzone = document.getElementById("drop_zone");
+    const dropzonePrompt = document.getElementById("dropzone-prompt");
     const copyCompleteDiv = document.getElementById("copy-complete");
 
     function setSupplier(id) {
-        supplier = id;
-        let _supplier = suppliers[id];
+        supplier = suppliers[id];
         document.getElementById("div-supp").hidden = true;
         let importTitle = document.getElementById("import-title");
-        importTitle.innerText = "Import " + _supplier.name + " order";
+        importTitle.innerText = "Import " + supplier.name + " order";
 
-        if('instructions' in _supplier) {
+        if('instructions' in supplier) {
             let details = document.createElement('details');
             let summary = document.createElement('summary');
             summary.innerText = "Instructions";
@@ -174,7 +172,7 @@
             details.appendChild(summary);
 
             let list = document.createElement('ol');
-            for (const instruction of _supplier.instructions) {
+            for (const instruction of supplier.instructions) {
                 let li = document.createElement('li');
                 li.innerText = instruction;
                 list.appendChild(li);
@@ -184,11 +182,11 @@
             importTitle.insertAdjacentElement('afterend', details)
         }
 
-        document.getElementById('file-input-label').innerText = "Upload " + _supplier.name + " basket " + _supplier.fileType + " file";
-        dropZonePrompt.innerHTML = "Drop " + _supplier.name + " basket " + _supplier.fileType + " here";
-        dropZonePrompt.innerHTML += '<p style="font-size: 15px">(or click to choose a file)</p>';
+        document.getElementById('file-input-label').innerText = "Upload " + supplier.name + " basket " + supplier.fileType + " file";
+        dropzonePrompt.innerHTML = "Drop " + supplier.name + " basket " + supplier.fileType + " here";
+        dropzonePrompt.innerHTML += '<p style="font-size: 15px">(or click to choose a file)</p>';
         document.getElementById("div-process").hidden = false;
-        fileInput.setAttribute("accept", _supplier.fileType)
+        fileInput.setAttribute("accept", supplier.fileType)
     }
 
     function InputChanged(element) {
@@ -309,8 +307,7 @@
         let successBox = document.getElementById("drop_zone-success");
         let warningBox = document.getElementById("drop_zone-warning");
 
-        let dropzoneFilename = dropZone.getElementsByClassName("dropzone-filename")[0];
-        let dropzonePrompt = dropZone.getElementsByClassName("dropzone-prompt")[0];
+        let dropzoneFilename = document.getElementById("dropzone-filename");
 
         let errorBoxWasHidden = errorBox.hidden;
         errorBox.hidden = true;
@@ -371,15 +368,15 @@
         }
 
         let config = {}
-        if ('config' in suppliers[supplier]) {
-            config = suppliers[supplier].config;
+        if ('config' in supplier) {
+            config = supplier.config;
         }
 
-        if(suppliers[supplier].type === "csv") {
+        if(supplier.type === "csv") {
             CsvParse(file, processDropzoneProducts, config);
-        } else if(suppliers[supplier].type === "xls") {
+        } else if(supplier.type === "xls") {
             XlsParse(file, processDropzoneProducts, config);
-        } else if(suppliers[supplier].type === "rs") {
+        } else if(supplier.type === "rs") {
             RsParse(file, processDropzoneProducts, config);
         }
     }
@@ -413,8 +410,8 @@
     fileInput.addEventListener('change', handleFileInput, false);
 
     // Setup the dnd listeners.
-    dropZone.addEventListener('dragover', handleDragOver, false);
-    dropZone.addEventListener('drop', handleFileDrop, false);
+    dropzone.addEventListener('dragover', handleDragOver, false);
+    dropzone.addEventListener('drop', handleFileDrop, false);
 </script>
 
 </body>
