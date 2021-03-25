@@ -41,7 +41,7 @@
             text-rendering: optimizeLegibility;
         }
 
-        #drop_zone {
+        #dropzone {
             border: 3px dashed #aaaaaa;
             -moz-border-radius: 5px;
             -webkit-border-radius: 5px;
@@ -99,15 +99,15 @@
 
             <label for="file-input" id="file-input-label" hidden></label>
             <input style="display: none" type="file" id="file-input">
-            <div id="drop_zone" onclick="fileInput.click()">
+            <div id="dropzone" onclick="fileInput.click()">
                 <span style="font-size: 40pt" class="glyphicon glyphicon-file"></span><br>
                 <p id="dropzone-prompt"></p>
                 <p id="dropzone-filename" hidden></p>
             </div>
             <br>
-            <div class="alert alert-danger" id="drop_zone-error" hidden></div>
-            <div class="alert alert-success" id="drop_zone-success" hidden></div>
-            <div class="alert alert-warning" id="drop_zone-warning" hidden><b>Warning: </b> some data may be missing or inaccurate</div>
+            <div class="alert alert-danger" id="dropzone-error" hidden></div>
+            <div class="alert alert-success" id="dropzone-success" hidden></div>
+            <div class="alert alert-warning" id="dropzone-warning" hidden><b>Warning: </b> some data may be missing or inaccurate</div>
         </div>
 
         <div class="col-sm-6" id="export-col">
@@ -154,7 +154,7 @@
     let productsValid = false;
 
     const fileInput = document.getElementById("file-input");
-    const dropzone = document.getElementById("drop_zone");
+    const dropzone = document.getElementById("dropzone");
     const dropzonePrompt = document.getElementById("dropzone-prompt");
     const copyCompleteDiv = document.getElementById("copy-complete");
 
@@ -303,9 +303,9 @@
     }
 
     function handleFile(file, error) {
-        let errorBox = document.getElementById("drop_zone-error");
-        let successBox = document.getElementById("drop_zone-success");
-        let warningBox = document.getElementById("drop_zone-warning");
+        let errorBox = document.getElementById("dropzone-error");
+        let successBox = document.getElementById("dropzone-success");
+        let warningBox = document.getElementById("dropzone-warning");
 
         let dropzoneFilename = document.getElementById("dropzone-filename");
 
