@@ -6,13 +6,13 @@ class Product {
     }
 }
 
-function RsParse(file, callback, config) {
+function RsParse(file, callback) {
     let reader = new FileReader();
     reader.onerror = () => {
         callback([], ["Failed to read file:\n" + reader.error])
     };
     reader.onload = file => {
-        let rsJs = "", parser = new DOMParser().parseFromString(file.target.result, "text/html");
+        let rsJs = "", parser = new DOMParser().parseFromString(file.target.result.toString(), "text/html");
         for (const script of parser.scripts) {
             rsJs += script.text + "\n"
         }
@@ -249,11 +249,7 @@ function findData(data, callback) {
     callback(products, errors, showWarning);
 }
 
-function XlsParse(file, callback, config) {
-    if (!config) {
-        config = {};
-    }
-
+function XlsParse(file, callback) {
     let reader = new FileReader();
     reader.onload = file => {
         let data = new Uint8Array(file.target.result);
