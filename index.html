@@ -145,7 +145,7 @@
 
     for (const [id, _supplier] of Object.entries(suppliers)) {
         let button = document.createElement('button');
-        button.onclick = () => setSupplier(id);
+        button.onclick = () => location.href = "#" + id;
         button.className = "btn btn-primary btn-lg btn-supp";
         button.innerText = _supplier.name + (_supplier.beta ? ' (beta)' : '');
         document.getElementById('supplier-select').appendChild(button);
@@ -160,6 +160,18 @@
     const copyCompleteDiv = document.getElementById("copy-complete");
 
     function setSupplier(id) {
+        if(!(id in suppliers)) {
+            window.location.replace(".");
+            return;
+        } else if(!window.location.hash) {
+            location.href = '#' + id;
+        }
+
+        // we've set a supplier, server reload needed if the user navigates to a different page
+        window.onpopstate = () => {
+            location.reload();
+        }
+
         supplier = suppliers[id];
         document.getElementById("div-supp").hidden = true;
         let importTitle = document.getElementById("import-title");
@@ -407,6 +419,15 @@
     // Setup the dnd listeners.
     dropzone.addEventListener('dragover', handleDragOver, false);
     dropzone.addEventListener('drop', handleFileDrop, false);
+
+    function getHash() {
+        if(window.location.hash) {
+            setSupplier(window.location.hash.substring(1));
+        }
+    }
+
+    window.onpopstate = () => getHash();
+    getHash();
 </script>
 
 </body>
