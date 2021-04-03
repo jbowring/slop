@@ -15,7 +15,7 @@ const suppliers = {
         name: "Avnet",
         type: "csv",
         fileType: ".csv",
-        decimalPlaces: 5,
+        decimalPlaces: 4,
         config: {
             delimiter: '\t',
         },
