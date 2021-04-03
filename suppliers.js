@@ -19,7 +19,6 @@ const suppliers = {
         config: {
             delimiter: '\t',
         },
-        beta: true,
     },
     "mouser": {
         name: "Mouser",
