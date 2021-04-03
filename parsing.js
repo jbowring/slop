@@ -180,23 +180,41 @@ function parseCurrencyDecimal(string) {
 
 function findData(data, callback) {
     const translations = {
-        Description: [
-            /(?:manufacturer)?description/,
-            /products/,
-        ],
-        Quantity: [
-            /quantity/,
-            /(?:order)?qty/,
-        ],
-        Price: [
-            /unit(?:cost|price)/,
-            /price(?:[A-Z]{3}|unit)/,
-        ],
+        Description: {
+            regex: [
+                /(?:manufacturer)?description/,
+                /products/,
+            ],
+        },
+        Quantity: {
+            regex: [
+                /quantity/,
+                /(?:order)?qty/,
+            ],
+        },
+        Price: {
+            regex: [
+                /unit(?:cost|price)/,
+                /price(?:[A-Z]{3}|unit)/,
+            ],
+        },
+        Discount: {
+            optional: true,
+            regex: [
+                /discountprice/
+            ],
+        },
+        Surcharge: {
+            optional: true,
+            regex: [
+                /surcharge/,
+            ],
+        },
     }
 
     // Add "ignore case" flag
     for (const translation in translations) {
-        translations[translation] = translations[translation].map(regex => RegExp(regex.source, "i"));
+        translations[translation].regex = translations[translation].regex.map(regex => RegExp(regex.source, "i"));
     }
 
     let headerMap;
@@ -205,13 +223,14 @@ function findData(data, callback) {
         headerMap = {};
         if (Object.keys(translations).every(header => {
             for (const [col, cell] of Object.entries(data[row])) {
-                if (!Object.values(headerMap).includes(col) && translations[header].some(regex => {
+                if (!Object.values(headerMap).includes(col) && translations[header].regex.some(regex => {
                     return cell.replace(/\W/g, '').match(regex) !== null;
                 })) {
                     headerMap[header] = col;
                     return true;
                 }
             }
+            return ('optional' in translations[header] && translations[header].optional)
         })) {
             headerRow = row;
             break;
@@ -239,11 +258,30 @@ function findData(data, callback) {
             if(end) {
                 showWarning = true;
             }
+
+            if ('Discount' in headerMap) {
+                let discount = parseCurrencyDecimal(line[headerMap.Discount])
+                if (!isNaN(discount) && discount > 0 && discount < price) {
+                    price = discount
+                }
+            }
+
             products.push(new Product(
                 line[headerMap.Description],
                 quantity,
                 price,
             ))
+
+            if ('Surcharge' in headerMap) {
+                let surcharge = parseCurrencyDecimal(line[headerMap.Surcharge])
+                if (!isNaN(surcharge) && surcharge > 0) {
+                    products.push(new Product(
+                        'Surcharge for ' + line[headerMap.Description],
+                        1,
+                        surcharge,
+                    ))
+                }
+            }
         }
     }
     callback(products, errors, showWarning);
