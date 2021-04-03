@@ -251,7 +251,7 @@
 
             let testQuantity = test.quantity || 0;
             let testCost = test.cost || 0;
-            let costDelta = testCost - cost;
+            let costDelta = cost - testCost;
 
             // Allow test to override accuracy
             let decimalPlaces = null;
