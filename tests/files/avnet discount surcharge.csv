@@ -1,0 +1,9 @@
+sep=	 
+#	Products	Manufacturer	In Stock	Quantity	Price/Unit	Surcharge	Discount Price	Subtotal with Surcharge & Discounts
+1	BX0033	Bulgin	200 In Stock,11 Weeks Lead Time	200	EUR 1,9364	EUR 1,01	EUR 1,8532	EUR 371,66	
+2	AIRD-01-3R3M	Abracon	1,920 In Stock,8 Weeks Lead Time	960	EUR 1,7152	EUR 0,00	EUR 1,7150	EUR 1.646,49	
+3	AIUR-03-471K	Abracon	1,000 In Stock,7 Weeks Lead Time	1,000	EUR 0,2815	EUR 0,00	EUR 0,00	EUR 281,50	
+4	ASPI-0704S-100M-T	Abracon	2,000 In Stock,20 Weeks Lead Time	1,000	EUR 0,7745	EUR 9,00	EUR 0,00	EUR 783,50	
+5	AES-ZU2EG-1-SOM-G	Avnet Engineering Services	32 In Stock	100	EUR 362,70	EUR 0,00	EUR 0,00	EUR 36.270,00	
+
+									CART SUBTOTAL(EUR):	39.353,15
