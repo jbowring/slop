@@ -277,7 +277,7 @@
 
             let total = cost.toFixed(2);
 
-            if (Math.abs(costDelta) >= 0.01) {
+            if (testCost.toFixed(2) !== cost.toFixed(2)) {
                 total += ' <span style="color: red">(';
                 if(costDelta > 0) {
                     total += '+'
