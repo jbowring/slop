@@ -98,6 +98,11 @@
         <div class="col-sm-6" style="border-right: 1px solid #ccc;">
             <h2 id="import-title"></h2>
 
+            <details id="instructions-details" hidden>
+                <summary class="text-primary">Instructions</summary>
+                <ol id="instructions-list"></ol>
+            </details>
+
             <label for="file-input" id="file-input-label" hidden></label>
             <input style="display: none" type="file" id="file-input">
             <div id="dropzone" onclick="fileInput.click()">
@@ -178,21 +183,13 @@
         importTitle.innerText = "Import " + supplier.name + " order";
 
         if('instructions' in supplier) {
-            let details = document.createElement('details');
-            let summary = document.createElement('summary');
-            summary.innerText = "Instructions";
-            summary.className = "text-primary";
-            details.appendChild(summary);
-
-            let list = document.createElement('ol');
-            for (const instruction of supplier.instructions) {
-                let li = document.createElement('li');
-                li.innerText = instruction;
-                list.appendChild(li);
+            let list = document.getElementById('instructions-list');
+            for (const instructionText of supplier.instructions) {
+                let instruction = document.createElement('li');
+                instruction.innerText = instructionText;
+                list.appendChild(instruction);
             }
-            details.appendChild(list);
-
-            importTitle.insertAdjacentElement('afterend', details)
+            document.getElementById('instructions-details').hidden = false;
         }
 
         document.getElementById('file-input-label').innerText = "Upload " + supplier.name + " basket " + supplier.fileType + " file";
