@@ -128,15 +128,12 @@
                 <input type="text" class="form-control" oninput="InputChanged(this)" onfocusout="Validate(this)" id="project" maxlength="20" placeholder="ex. C30402">
             </div>
 
-            <button type="button" class="btn btn-primary" id="btn-copy" onclick="Generate()" disabled>
+            <button type="button" class="btn btn-primary" id="btn-copy" onclick="Generate()" ondblclick="Generate(false)" disabled>
                 Copy data to clipboard
             </button>
             <br><br>
             <div id="copy-complete" hidden>
-                <div class="alert alert-info">
-                    <strong>Copied!</strong>
-                    To add the data to a purchase order, click anywhere in the table and go to <i>Edit</i> > <i>Paste Rows Append</i>
-                </div>
+                <div id="copy-complete-message" class="alert alert-info"></div>
                 <i class="note">
                     Warning: this might not work if the PO columns are not in their default order in SyteLine
                 </i>
@@ -235,7 +232,7 @@
         return valid;
     }
 
-    function Generate() {
+    function Generate(tripleSpace = true) {
         copyCompleteDiv.hidden = true;
         if (ValidatePage()) {
             let out = "";
@@ -248,7 +245,9 @@
                 row.push(project);
                 row.push("");
                 row.push("");
-                row.push("");
+                if(tripleSpace) {
+                    row.push("");
+                }
                 row.push(product.quantity.toFixed(4))
                 row.push(product.price.toFixed(5))
 
@@ -257,6 +256,14 @@
 
                 out += row.join('\t') + "\r\n";
             }
+
+            let copyMessageDiv = document.getElementById("copy-complete-message")
+            copyMessageDiv.innerHTML = "<strong>Copied!</strong>"
+            if(!tripleSpace) {
+                copyMessageDiv.innerHTML += "<strong> [old SyteLine format]</strong>"
+            }
+            copyMessageDiv.innerHTML += " To add the data to a purchase order, click anywhere in the table and go to <i>Edit</i> > <i>Paste Rows Append</i>"
+
             if(WriteClipboard(out)) {
                 setTimeout(() => copyCompleteDiv.hidden = false, 100);
             }
