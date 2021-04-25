@@ -30,7 +30,6 @@ const suppliers = {
         name: "RS",
         type: "rs",
         fileType: ".html",
-        beta: true,
         decimalPlaces: 5,
         instructions: [
             'Before checkout, navigate to your RS basket page',
