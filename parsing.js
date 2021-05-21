@@ -184,6 +184,7 @@ function findData(data, callback) {
             regex: [
                 /(?:manufacturer)?description/,
                 /products/,
+                /item/,
             ],
         },
         Quantity: {
