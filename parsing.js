@@ -196,8 +196,7 @@ function findData(data, callback) {
         Price: {
             regex: [
                 /unit(?:cost|price)/,
-                /price(?:[A-Z]{3}|unit)/,
-                /price/,
+                /price(?:[A-Z]{3}|unit)?/,
             ],
         },
         Discount: {
