@@ -257,7 +257,7 @@
                 cost += product.price * product.quantity;
             });
 
-            cost = Math.trunc(cost * 100) / 100
+            cost = Math.round(cost * 100) / 100
 
             let testQuantity = test.quantity || 0;
             let testCost = test.cost || 0;
