@@ -37,4 +37,10 @@ const suppliers = {
             'Upload the file below',
         ]
     },
+    "thorlabs": {
+        name: "Thorlabs",
+        type: "xls",
+        fileType: ".xls",
+        decimalPlaces: 2,
+    },
 }
