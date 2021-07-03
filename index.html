@@ -189,11 +189,12 @@
             document.getElementById('instructions-details').hidden = false;
         }
 
-        document.getElementById('file-input-label').innerText = "Upload " + supplier.name + " basket " + supplier.fileType + " file";
-        dropzonePrompt.innerHTML = "Drop " + supplier.name + " basket " + supplier.fileType + " here";
+        let fileTypes = supplier.fileTypes.join('/');
+        document.getElementById('file-input-label').innerText = "Upload " + supplier.name + " basket " + fileTypes + " file";
+        dropzonePrompt.innerHTML = "Drop " + supplier.name + " basket " + fileTypes + " here";
         dropzonePrompt.innerHTML += '<p style="font-size: 15px">(or click to choose a file)</p>';
         document.getElementById("div-process").hidden = false;
-        fileInput.setAttribute("accept", supplier.fileType)
+        fileInput.setAttribute("accept", supplier.fileTypes.join(','))
     }
 
     function InputChanged(element) {
