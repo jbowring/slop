@@ -128,7 +128,7 @@
                 <input type="text" class="form-control" oninput="InputChanged(this)" onfocusout="Validate(this)" id="project" maxlength="20" placeholder="ex. C30402">
             </div>
 
-            <button type="button" class="btn btn-primary" id="btn-copy" onclick="Generate()" ondblclick="Generate(false)" disabled>
+            <button type="button" class="btn btn-primary" id="btn-copy" onclick="Generate()" ondblclick="Generate(true)" disabled>
                 Copy data to clipboard
             </button>
             <br><br>
@@ -236,7 +236,7 @@
         return valid;
     }
 
-    function Generate(tripleSpace = true) {
+    function Generate(oldFormat = false) {
         copyCompleteDiv.hidden = true;
         if (ValidatePage()) {
             let out = "";
@@ -249,21 +249,21 @@
                 row.push(project);
                 row.push("");
                 row.push("");
-                if(tripleSpace) {
+                if(!oldFormat) {
                     row.push("");
                 }
                 row.push(product.quantity.toFixed(4))
                 row.push(product.price.toFixed(5))
 
                 // SyteLine only allows 60 characters as a field length
-                row = row.map(value => value.substring(0, 60))
+                row = row.map(value => value.substring(0, oldFormat ? 40 : 60))
 
                 out += row.join('\t') + "\r\n";
             }
 
             let copyMessageDiv = document.getElementById("copy-complete-message")
             copyMessageDiv.innerHTML = "<strong>Copied!</strong>"
-            if(!tripleSpace) {
+            if(oldFormat) {
                 copyMessageDiv.innerHTML += "<strong> [old SyteLine format]</strong>"
             }
             copyMessageDiv.innerHTML += " To add the data to a purchase order, click anywhere in the table and go to <i>Edit</i> > <i>Paste Rows Append</i>"
