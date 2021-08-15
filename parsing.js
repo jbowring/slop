@@ -229,9 +229,9 @@ function findData(data, callback) {
         },
     }
 
-    // Add "ignore case" flag
+    // Add "ignore case" flag and string start/end anchors
     for (const translation in translations) {
-        translations[translation].regex = translations[translation].regex.map(regex => RegExp(regex.source, "i"));
+        translations[translation].regex = translations[translation].regex.map(regex => RegExp('^' + regex.source + '$', "i"));
     }
 
     let headerMap;
@@ -241,7 +241,7 @@ function findData(data, callback) {
         if (Object.keys(translations).every(header => {
             for (const [col, cell] of Object.entries(data[row])) {
                 if (!Object.values(headerMap).includes(col) && translations[header].regex.some(regex => {
-                    return cell.replace(/\W/g, '').match(regex) !== null;
+                    return regex.test(cell.replace(/\W/g, ''));
                 })) {
                     headerMap[header] = col;
                     return true;
