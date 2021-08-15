@@ -180,11 +180,19 @@ function parseCurrencyDecimal(string) {
 
 function findData(data, callback) {
     const translations = {
+        Part: {
+            regex: [
+                /products/,
+                /partnumber/,
+                /ordercode/,
+                /mouserno/,
+            ],
+        },
         Description: {
             regex: [
                 /(?:manufacturer)?description/,
-                /products/,
                 /item/,
+                /manufacturer/,
             ],
         },
         Quantity: {
@@ -268,7 +276,7 @@ function findData(data, callback) {
             }
 
             products.push(new Product(
-                line[headerMap.Description],
+                line[headerMap.Part] + ' ' + line[headerMap.Description],
                 quantity,
                 price,
             ))
