@@ -307,8 +307,7 @@ function findData(data, callback) {
 function XlsParse(file, callback) {
     let reader = new FileReader();
     reader.onload = file => {
-        let data = new Uint8Array(file.target.result);
-        let workbook = XLSX.read(data, {type: 'array'});
+        let workbook = XLSX.read(file.target.result, {type: 'array'});
         if(workbook.Sheets.length < 1 || workbook.SheetNames.length < 1) {
             callback([], ["No sheets found in workbook"])
             return;
