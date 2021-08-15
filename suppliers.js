@@ -1,15 +1,21 @@
 const suppliers = {
     "digikey": {
         name: "DigiKey",
-        type: "csv",
+        types: [
+            "csv",
+            "xls",
+        ],
         fileTypes: [
-            ".csv"
+            ".csv",
+            ".xlsx"
         ],
         decimalPlaces: 5,
     },
     "farnell": {
         name: "Farnell",
-        type: "csv",
+        types: [
+            "csv",
+        ],
         fileTypes: [
             ".csv"
         ],
@@ -17,7 +23,9 @@ const suppliers = {
     },
     "avnet": {
         name: "Avnet",
-        type: "csv",
+        types: [
+            "csv",
+        ],
         fileTypes: [
             ".csv"
         ],
@@ -28,7 +36,9 @@ const suppliers = {
     },
     "mouser": {
         name: "Mouser",
-        type: "xls",
+        types: [
+            "xls",
+        ],
         fileTypes: [
             ".xls"
         ],
@@ -36,7 +46,9 @@ const suppliers = {
     },
     "rs": {
         name: "RS",
-        type: "rs",
+        types: [
+            "rs",
+        ],
         fileTypes: [
             ".htm",
             ".html"
@@ -50,7 +62,9 @@ const suppliers = {
     },
     "thorlabs": {
         name: "Thorlabs",
-        type: "xls",
+        types: [
+            "xls",
+        ],
         fileTypes: [
             ".xls"
         ],

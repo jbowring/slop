@@ -388,11 +388,38 @@
 
         let config = 'config' in supplier ? supplier.config : {};
 
-        if(supplier.type === "csv") {
+        let extension = file.name.slice((file.name.lastIndexOf(".") - 1 >>> 0) + 2)
+
+        // Use first supported supplier type as a default
+        let type = supplier.types[0];
+
+        const typeMap = {
+            csv: [
+                'csv',
+            ],
+            xls: [
+                'xls',
+                'xlsx',
+            ]
+        }
+
+        // If multiple types supported and it's an expected file extension, then guess the type based on the extension
+        if(supplier.types.length > 1 && supplier.fileTypes.includes('.'+extension)) {
+            for (const candidate of Object.keys(typeMap).filter(type => supplier.types.includes(type))) {
+                if(typeMap[candidate].includes(extension)) {
+                    type = candidate;
+                    break;
+                }
+            }
+        }
+
+        console.log(type);
+
+        if(type === "csv") {
             CsvParse(file, processDropzoneProducts, config);
-        } else if(supplier.type === "xls") {
+        } else if(type === "xls") {
             XlsParse(file, processDropzoneProducts, config);
-        } else if(supplier.type === "rs") {
+        } else if(type === "rs") {
             RsParse(file, processDropzoneProducts, config);
         }
     }
