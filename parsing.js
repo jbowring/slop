@@ -126,6 +126,7 @@ function RsParse(file, callback) {
 
                 if(
                     Object.keys(breakPrices).length !== 0 &&
+                    'productId' in product &&
                     'description' in product &&
                     !isNaN(quantity)
                 ) {
@@ -139,8 +140,15 @@ function RsParse(file, callback) {
                                     price = webpageCost
                                 }
                             }
+
+                            // Some product IDs don't have a hyphen, strip existing and manually insert
+                            let productId = String(product.productId).replace(/[^\d]/g, '')
+                            if (productId.length > 6) {
+                                productId = productId.slice(0, 3) + '-' + productId.slice(3)
+                            }
+
                             products.push(new Product(
-                                String(product.description),
+                                productId + ' ' + String(product.description),
                                 quantity,
                                 price,
                             ))
