@@ -160,6 +160,9 @@
     const dropzone = document.getElementById("dropzone");
     const dropzonePrompt = document.getElementById("dropzone-prompt");
     const copyCompleteDiv = document.getElementById("copy-complete");
+    const categoryInput = document.getElementById("category");
+    const projectInput = document.getElementById("project");
+    const copyButton = document.getElementById("btn-copy");
 
     function setSupplier(id) {
         if(!(id in suppliers)) {
@@ -226,7 +229,7 @@
 
     function ValidatePage() {
         let valid = productsValid && FieldValid("category") && FieldValid("project")
-        document.getElementById("btn-copy").disabled = !valid;
+        copyButton.disabled = !valid;
         if(!valid) {
             copyCompleteDiv.hidden = true;
         }
@@ -237,8 +240,8 @@
         copyCompleteDiv.hidden = true;
         if (ValidatePage()) {
             let out = "";
-            const category = document.getElementById("category").value;
-            const project = document.getElementById("project").value;
+            const category = categoryInput.value;
+            const project = projectInput.value;
             for(const product of products) {
                 let row = [];
                 row.push(category)
@@ -425,6 +428,15 @@
     // Setup the dnd listeners.
     dropzone.addEventListener('dragover', handleDragOver, false);
     dropzone.addEventListener('drop', handleFileDrop, false);
+
+    // Enter key function
+    for (const inputElement of [categoryInput, projectInput]) {
+        inputElement.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                copyButton.click();
+            }
+        });
+    }
 
     function getHash() {
         if(window.location.hash) {
